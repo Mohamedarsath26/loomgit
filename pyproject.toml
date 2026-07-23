@@ -1,0 +1,10 @@
+[project]
+name = "devmemory"
+version = "0.1.0"
+description = "A tool that remembers developers knowledge"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+"pydantic>=2.0.0",
+"pytest>=8.0.0"
+]
