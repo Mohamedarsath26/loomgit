@@ -42,6 +42,8 @@ def main():
             
         for record in results:
             print(f"- [{record.type.value}] {record.summary}")
+            if record.what_changed:
+                print(f"  🔧 What changed: {record.what_changed}")
             print(f"  Reasoning: {record.reasoning}\n")
 
     elif args.command == "install-hook":

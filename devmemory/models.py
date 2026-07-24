@@ -33,3 +33,4 @@ class MemoryRecord(BaseModel):
     source_ref : str
     timestamp : datetime
     embedding : list[float] | None = None
+    what_changed : str = ""

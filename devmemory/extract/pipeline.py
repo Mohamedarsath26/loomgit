@@ -42,6 +42,7 @@ class ExtractionPipeline:
             tags=extracted_data.get("tags", []),
             related_files=extracted_data.get("related_files", []),
             source_ref=f"{event.source}:{event.id}",
+            what_changed=extracted_data.get("what_changed", ""),
             timestamp=datetime.now()
         )
 

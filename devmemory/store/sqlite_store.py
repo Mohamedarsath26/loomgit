@@ -43,7 +43,8 @@ class SQLiteStore:
                 tags TEXT NOT NULL,
                 related_files TEXT NOT NULL,
                 source_ref TEXT NOT NULL,
-                timestamp TEXT NOT NULL
+                timestamp TEXT NOT NULL,
+                what_changed TEXT NOT NULL DEFAULT ''
             )
         """)
         
@@ -98,9 +99,9 @@ class SQLiteStore:
             cursor.execute("""
                 INSERT INTO memory_records (
                     id, raw_event_id, type, summary, reasoning, tags, 
-                    related_files, source_ref, timestamp
+                    related_files, source_ref, timestamp, what_changed
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 record.id,
                 record.raw_event_id,
@@ -110,7 +111,8 @@ class SQLiteStore:
                 json.dumps(record.tags),           # Convert list of strings to JSON string
                 json.dumps(record.related_files),  # Convert list of strings to JSON string
                 record.source_ref,
-                record.timestamp.isoformat()       # Convert datetime to string
+                record.timestamp.isoformat(),     # Convert datetime to string
+                record.what_changed
             ))
             
             self.conn.commit()
@@ -136,6 +138,7 @@ class SQLiteStore:
             related_files=json.loads(row["related_files"]), # Convert JSON string back to list
             source_ref=row["source_ref"],
             timestamp=datetime.fromisoformat(row["timestamp"]), # Convert string back to datetime
+            what_changed=row["what_changed"],
             embedding=None # We will handle embeddings in Phase 4!
         )
 
