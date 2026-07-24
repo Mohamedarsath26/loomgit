@@ -17,6 +17,9 @@ class MemoryType(str, Enum):
     MIGRATION = "migration"
     EXPERIMENT = "experiment"
     API_FAILURE = "api_failure"
+    ARCHITECTURE = "architecture"
+    TOOL_USAGE = "tool_usage"
+    LESSON_LEARNED = "lesson_learned"
     NOTE = "note"
 
 class MemoryRecord(BaseModel):
