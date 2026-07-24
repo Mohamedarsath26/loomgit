@@ -45,7 +45,12 @@ def main():
             print(f"- [{record.type.value}] {record.summary}")
             if record.what_changed:
                 print(f"  🔧 What changed: {record.what_changed}")
-            print(f"  Reasoning: {record.reasoning}\n")
+            if record.related_files:
+                print(f"  📁 Files: {', '.join(record.related_files)}")
+            if record.tags:
+                print(f"  🏷️  Tags: {', '.join(record.tags)}")
+            print(f"  💡 Reasoning: {record.reasoning}\n")
+
 
     elif args.command == "install-hook":
         git_dir = Path.cwd() / ".git"
