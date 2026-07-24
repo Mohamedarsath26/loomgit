@@ -3,6 +3,7 @@ from pathlib import Path
 from devmemory.store.sqlite_store import SQLiteStore
 from devmemory.qdrant_store import QdrantVectorStore
 from devmemory.capture.manual import create_manual_event
+from devmemory.capture.git import create_git_event
 from devmemory.extract.pipeline import ExtractionPipeline
 from devmemory.llm.groq_client import GroqLLMClient
 from devmemory.llm.google_embedding import GoogleEmbeddingClient
@@ -21,7 +22,7 @@ class Memory:
         self.vector_store = QdrantVectorStore(storage_dir=db_path.parent)
         self.pipeline = ExtractionPipeline(self.store, self.llm, self.vector_store, self.embedder)
 
-    def capture(self, source: str, raw_text: str, metadata: dict | None = None) -> None:
+    def capture(self, source: str, raw_text: str = "", metadata: dict | None = None) -> None:
         """Captures a raw event and saves it to the database."""
         if metadata is None:
             metadata = {}
@@ -33,6 +34,14 @@ class Memory:
             # 2. Save it to the database!
             self.store.save_raw_event(event)
             print(f"Captured manual memory: '{raw_text}'")
+
+            self.pipeline.process_event(event.id)
+
+        elif source == "git":
+            repo_path = metadata.get("repo_path")
+            event = create_git_event(repo_path=repo_path)
+            self.store.save_raw_event(event)
+            print(f"Captured git memory: '{event.raw_text}'")
 
             self.pipeline.process_event(event.id)
 

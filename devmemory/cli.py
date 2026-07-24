@@ -17,6 +17,10 @@ def main():
     search_parser = subparsers.add_parser("search", help="Search your memories")
     search_parser.add_argument("query", type=str, help="What you want to search for")
 
+    subparsers.add_parser("install-hook", help="Install post-commit Git hook")
+    
+    subparsers.add_parser("log-git", help="Capture the latest Git commit into devmemory")
+
     # 4. Parse whatever the user typed in the terminal!
     args = parser.parse_args()
 
@@ -39,6 +43,31 @@ def main():
         for record in results:
             print(f"- [{record.type.value}] {record.summary}")
             print(f"  Reasoning: {record.reasoning}\n")
+
+    elif args.command == "install-hook":
+        git_dir = Path.cwd() / ".git"
+        if not git_dir.exists():
+            print("❌ Error: Not a git repository! Run this command inside a git repository.")
+            return
+
+        hooks_dir = git_dir / "hooks"
+        hooks_dir.mkdir(parents=True, exist_ok=True)
+        hook_path = hooks_dir / "post-commit"
+
+        hook_script = "#!/bin/sh\ndevmemory log-git > /dev/null 2>&1 &\n"
+        hook_path.write_text(hook_script, encoding="utf-8")
+
+        try:
+            hook_path.chmod(0o755)
+        except Exception:
+            pass
+
+        print(f"✅ Successfully installed Git post-commit hook into {hook_path}")
+
+    elif args.command == "log-git":
+        memory.capture(source="git")
+        print("✅ Captured Git commit memory!")
+
 
 if __name__ == "__main__":
     main()
