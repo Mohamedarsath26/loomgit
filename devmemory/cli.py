@@ -1,6 +1,7 @@
 import argparse
 from pathlib import Path
 from devmemory import Memory
+import shutil
 
 def main():
     # Setup the parser
@@ -56,7 +57,12 @@ def main():
         hooks_dir.mkdir(parents=True, exist_ok=True)
         hook_path = hooks_dir / "post-commit"
 
-        hook_script = "#!/bin/sh\ndevmemory log-git > /dev/null 2>&1 &\n"
+        # hook_script = "#!/bin/sh\ndevmemory log-git > /dev/null 2>&1 &\n"
+
+        devmemory_path = shutil.which("devmemory")
+        # Convert Windows path to Git Bash format (C:\Users\... → /c/Users/...)
+        bash_path = devmemory_path.replace("\\", "/").replace("C:/", "/c/")
+        hook_script = f"#!/bin/sh\n\"{bash_path}\" log-git > /dev/null 2>&1 &\n"
         hook_path.write_text(hook_script, encoding="utf-8")
 
         try:
