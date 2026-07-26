@@ -199,8 +199,11 @@ def main():
     elif args.command == "log-git":
         with console.status("[bold cyan]Extracting & embedding Git commit...[/bold cyan]", spinner="dots"):
             memory = Memory(db_path=db_path)
-            memory.capture(source="git")
-        console.print("\n[bold green]✓[/bold green] [bold]Captured Git commit memory![/bold]\n")
+            captured = memory.capture(source="git")
+        if captured:
+            console.print("\n[bold green]✓[/bold green] [bold]Captured Git commit memory![/bold]\n")
+        else:
+            console.print("\n[bold yellow]ℹ[/bold yellow] [bold]Commit was already captured in devmemory. Skipped duplicate.[/bold]\n")
 
     elif args.command == "setup":
         console.print("\n[bold cyan]🧠 Welcome to devmemory setup![/bold cyan]\n")

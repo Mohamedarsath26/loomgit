@@ -167,6 +167,15 @@ class SQLiteStore:
             ))
         return records
 
+    def has_commit_hash(self, commit_hash: str) -> bool:
+        """Checks if a Git commit hash has already been captured in raw_events."""
+        cursor = self.conn.cursor()
+        cursor.execute(
+            "SELECT 1 FROM raw_events WHERE source = 'git' AND metadata LIKE ? LIMIT 1",
+            (f'%"commit_hash": "{commit_hash}"%',)
+        )
+        return cursor.fetchone() is not None
+
 
     
 

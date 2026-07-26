@@ -47,16 +47,25 @@ Respond ONLY with a valid JSON object with these exact keys:
 - "related_files": MUST include ALL files from the "Changed files" list above. Do not omit any.
 """
 
-        # Send the prompt to Groq's AI!
-        response = self.client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.1,  # Low temperature = more predictable, structured output
-            response_format={"type": "json_object"}
-        )
-        
-        # The AI's answer is a JSON string, so we parse it into a Python dictionary
-        ai_answer = response.choices[0].message.content.strip()
+        prompt += "\nCRITICAL: Ensure ALL string values are enclosed in valid double quotes. Output strictly valid JSON."
+
+        try:
+            # Send the prompt to Groq's AI with JSON mode!
+            response = self.client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.1,  # Low temperature = more predictable, structured output
+                response_format={"type": "json_object"}
+            )
+            ai_answer = response.choices[0].message.content.strip()
+        except Exception:
+            # Fallback without response_format if Groq's strict validator rejects syntax
+            response = self.client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.1
+            )
+            ai_answer = response.choices[0].message.content.strip()
         
         # Robustly extract JSON substring ({...} or [...])
         start_idx = min([i for i in [ai_answer.find('{'), ai_answer.find('[')] if i != -1], default=-1)

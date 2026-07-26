@@ -27,7 +27,7 @@ def get_last_commit_info(repo_path: Path | str | None = None) -> dict:
     message = _run_git_command(["log", "-1", "--format=%B"], cwd=repo_path)
     
     # Extract modified file list
-    raw_files = _run_git_command(["diff-tree", "--root", "--no-commit-id", "--name-only", "-r", "HEAD"], cwd=repo_path)
+    raw_files = _run_git_command(["show", "--name-only", "--format=", "HEAD"], cwd=repo_path)
     changed_files = [f for f in raw_files.splitlines() if f.strip()]
     
     # Extract code diff (exclude commit log header to prevent LLM prompt confusion)

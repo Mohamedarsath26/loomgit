@@ -40,10 +40,17 @@ class Memory:
         elif source == "git":
             repo_path = metadata.get("repo_path")
             event = create_git_event(repo_path=repo_path)
+            commit_hash = event.metadata.get("commit_hash")
+
+            if commit_hash and self.store.has_commit_hash(commit_hash):
+                print(f"Commit {commit_hash[:7]} has already been captured. Skipping.")
+                return False
+
             self.store.save_raw_event(event)
             print(f"Captured git memory: '{event.raw_text}'")
 
             self.pipeline.process_event(event.id)
+            return True
 
         else:
             # We will handle other sources (like git commits) later!
