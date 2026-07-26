@@ -1,20 +1,15 @@
-import os
 import json
 from groq import Groq
-from dotenv import load_dotenv
-
-load_dotenv()
+from devmemory.config import get_key
 
 class GroqLLMClient:
     """A real LLM client that talks to Groq's API."""
     
     def __init__(self):
-        # Grab the API key from the .env file
-        api_key = os.getenv("GROQ_API_KEY")
+        api_key = get_key("groq_api_key")
         if not api_key:
-            raise ValueError("GROQ_API_KEY not found in .env file!")
+            raise ValueError("GROQ_API_KEY not found! Run 'devmemory setup' first.")
         
-        # Create the Groq client
         self.client = Groq(api_key=api_key)
 
     def extract_memory_record(self, raw_text: str, source: str, metadata: dict) -> dict:
