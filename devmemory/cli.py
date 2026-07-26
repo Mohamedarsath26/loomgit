@@ -87,10 +87,11 @@ def main():
             badge_style, border_color = TYPE_STYLES.get(record.type.value, ("bold white on blue", "blue"))
             date_str = record.timestamp.strftime('%b %d, %Y • %I:%M %p')
 
-            # Header badge + title summary
-            title_text = f"[{badge_style}] {record.type.value.upper()} [/{badge_style}]  [bold white]{record.summary}[/bold white]"
+            # Header badge for top border
+            title_text = f"[{badge_style}] {record.type.value.upper()} [/{badge_style}]"
 
             body_lines = [
+                f"[bold white]{record.summary}[/bold white]",
                 f"[dim]🕒 {date_str}[/dim]"
             ]
 
@@ -137,9 +138,10 @@ def main():
             badge_style, border_color = TYPE_STYLES.get(record.type.value, ("bold white on blue", "blue"))
             date_str = record.timestamp.strftime('%b %d, %Y • %I:%M:%S %p')
 
-            title_text = f"[{badge_style}] {record.type.value.upper()} [/{badge_style}]  [bold white]{record.summary}[/bold white]"
+            title_text = f"[{badge_style}] {record.type.value.upper()} [/{badge_style}]"
 
             body_lines = [
+                f"[bold white]{record.summary}[/bold white]",
                 f"[dim]🕒 {date_str}[/dim]"
             ]
 
