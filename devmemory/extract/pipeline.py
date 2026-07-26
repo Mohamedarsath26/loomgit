@@ -61,10 +61,10 @@ class ExtractionPipeline:
         self.store.conn.commit()
 
        
-        # 5. Turn the summary into real numbers using Google Embeddings!
+        # 5. Turn full memory record into real numbers using Google Embeddings!
         if self.embedder:
-            # We embed both the summary and reasoning together for better search results
-            text_to_embed = f"{record.summary} {record.reasoning}"
+            tags_str = " ".join(record.tags) if record.tags else ""
+            text_to_embed = f"[{record.type.value}] {record.summary}\nWhat changed: {record.what_changed}\nReasoning: {record.reasoning}\nTags: {tags_str}"
             embedding = self.embedder.embed_text(text_to_embed)
         else:
             embedding = [0.1, 0.2, 0.3]

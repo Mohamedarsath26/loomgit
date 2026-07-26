@@ -49,19 +49,32 @@ Respond ONLY with a valid JSON object (no markdown, no extra text) with these ex
         
         # Send the prompt to Groq's AI!
         response = self.client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.1  # Low temperature = more predictable, structured output
         )
         
         # The AI's answer is a JSON string, so we parse it into a Python dictionary
-        ai_answer = response.choices[0].message.content
-        # Clean up markdown-wrapped JSON (e.g., ```json ... ```)
-        ai_answer = ai_answer.strip()
-        if ai_answer.startswith("```"):
-            ai_answer = ai_answer.split("\n", 1)[1]
-            ai_answer = ai_answer.rsplit("```", 1)[0]
-        return json.loads(ai_answer)
+        ai_answer = response.choices[0].message.content.strip()
+        
+        # Robustly extract JSON substring ({...} or [...])
+        start_idx = min([i for i in [ai_answer.find('{'), ai_answer.find('[')] if i != -1], default=-1)
+        end_idx = max(ai_answer.rfind('}'), ai_answer.rfind(']'))
+        
+        if start_idx != -1 and end_idx != -1 and end_idx >= start_idx:
+            ai_answer = ai_answer[start_idx:end_idx + 1]
+            
+        try:
+            return json.loads(ai_answer)
+        except json.JSONDecodeError:
+            return {
+                "type": "note",
+                "summary": raw_text[:100],
+                "what_changed": raw_text,
+                "reasoning": "Captured from Git commit",
+                "tags": ["git", "commit"],
+                "related_files": metadata.get("changed_files", [])
+            }
 
 
 
