@@ -26,12 +26,20 @@ class ExtractionPipeline:
             metadata=event.metadata
         )
 
+        # If LLM returned a list instead of a dict, grab the first item
+        if isinstance(extracted_data, list):
+            extracted_data = extracted_data[0] if extracted_data else {}
+
         # Parse type with fallback if LLM returns unknown string
         raw_type = extracted_data.get("type", "note")
         try:
             record_type = MemoryType(raw_type)
         except ValueError:
             record_type = MemoryType.NOTE
+
+        # Use actual changed_files from metadata (source of truth) over LLM extraction
+        actual_files = event.metadata.get("changed_files", []) if event.metadata else []
+        related_files = actual_files if actual_files else extracted_data.get("related_files", [])
 
         record = MemoryRecord(
             id=str(uuid.uuid4()),
@@ -40,7 +48,7 @@ class ExtractionPipeline:
             summary=extracted_data["summary"],
             reasoning=extracted_data["reasoning"],
             tags=extracted_data.get("tags", []),
-            related_files=extracted_data.get("related_files", []),
+            related_files=related_files,
             source_ref=f"{event.source}:{event.id}",
             what_changed=extracted_data.get("what_changed", ""),
             timestamp=datetime.now()

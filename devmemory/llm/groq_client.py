@@ -17,25 +17,34 @@ class GroqLLMClient:
         
         # Limit diff size to prevent overwhelming the AI
         diff = metadata.get('diff', 'No diff available')
-        if len(diff) > 3000:
-            diff = diff[:3000] + "\n... (diff truncated, see full diff in git log)"
+        if len(diff) > 5000:
+            diff = diff[:5000] + "\n... (diff truncated, see full diff in git log)"
+
+        # Format changed files as a clear numbered list
+        changed_files = metadata.get('changed_files', [])
+        files_list = "\n".join(f"  {i+1}. {f}" for i, f in enumerate(changed_files)) if changed_files else "  None"
 
         # This is the "prompt" — the instructions we give to the AI
-        prompt = f"""You are a developer memory assistant. Analyze this developer note and extract structured data.
+        prompt = f"""You are a developer memory assistant. Analyze this git commit and extract structured data.
+Be SPECIFIC about this project's code — mention actual function names, class names, and concrete changes.
+Do NOT write generic descriptions. Cover ALL changes across ALL files, not just the most prominent one.
 
-        Developer note: "{raw_text}"
-        Source: {source}
-        Changed files: {metadata.get('changed_files', [])}
-        Code diff: {diff}
+Commit message: "{raw_text}"
+Source: {source}
+Changed files:
+{files_list}
 
-        Respond ONLY with a valid JSON object (no markdown, no extra text) with these exact keys:
-        - "type": one of ["decision", "bug_fix", "architecture", "tool_usage", "lesson_learned", "note"]
-        - "summary": a clear 1-sentence summary
-        - "what_changed": a 2-3 sentence plain English explanation of what code was actually changed and why
-        - "reasoning": why this is worth remembering
-        - "tags": a list of relevant keyword tags
-        - "related_files": a list of any file paths mentioned (empty list if none)
-        """
+Code diff:
+{diff}
+
+Respond ONLY with a valid JSON object (no markdown, no extra text) with these exact keys:
+- "type": one of ["decision", "bug_fix", "architecture", "tool_usage", "lesson_learned", "note"]
+- "summary": a clear 1-sentence summary that covers the FULL scope of changes (mention all major changes, not just one)
+- "what_changed": a FILE-BY-FILE breakdown. For EACH changed file, write one line in this exact format: "• filename: what was changed and why". Cover every file. Be specific — mention function names, class names, and concrete modifications.
+- "reasoning": why this is worth remembering for future development
+- "tags": a list of relevant keyword tags
+- "related_files": MUST include ALL files from the "Changed files" list above. Do not omit any.
+"""
 
         
         # Send the prompt to Groq's AI!

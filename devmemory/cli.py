@@ -2,14 +2,19 @@ import argparse
 from pathlib import Path
 from devmemory import Memory
 import shutil
+import sys
+import io
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 import shutil
 import json
 
-
-console = Console()
+# Force UTF-8 output to avoid Windows cp1252 encoding errors with unicode symbols
+if sys.platform == "win32" and not isinstance(sys.stdout, io.TextIOWrapper):
+    console = Console()
+else:
+    console = Console(file=open(sys.stdout.fileno(), mode='w', encoding='utf-8', closefd=False))
 
 from rich.box import ROUNDED
 from rich.rule import Rule
