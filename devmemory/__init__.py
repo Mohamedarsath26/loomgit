@@ -67,3 +67,7 @@ class Memory:
                 
         return results
 
+    def list_all(self, limit: int = 50, order: str = "DESC") -> list:
+        """Retrieves all memory records sorted by date and time (newest first by default)."""
+        return self.store.get_all_memory_records(limit=limit, order=order)
+

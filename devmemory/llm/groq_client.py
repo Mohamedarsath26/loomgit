@@ -25,11 +25,12 @@ class GroqLLMClient:
         files_list = "\n".join(f"  {i+1}. {f}" for i, f in enumerate(changed_files)) if changed_files else "  None"
 
         # This is the "prompt" — the instructions we give to the AI
-        prompt = f"""You are a developer memory assistant. Analyze this git commit and extract structured data.
+        prompt = f"""You are a developer memory assistant. Analyze this git commit diff and extract structured data.
 Be SPECIFIC about this project's code — mention actual function names, class names, and concrete changes.
-Do NOT write generic descriptions. Cover ALL changes across ALL files, not just the most prominent one.
+Do NOT write generic descriptions or copy the raw commit message as the summary/what_changed.
+Analyze the actual CODE DIFF and summarize what the code changes did across each file.
 
-Commit message: "{raw_text}"
+Commit message context: "{raw_text}"
 Source: {source}
 Changed files:
 {files_list}
@@ -37,21 +38,21 @@ Changed files:
 Code diff:
 {diff}
 
-Respond ONLY with a valid JSON object (no markdown, no extra text) with these exact keys:
+Respond ONLY with a valid JSON object with these exact keys:
 - "type": one of ["decision", "bug_fix", "architecture", "tool_usage", "lesson_learned", "note"]
-- "summary": a clear 1-sentence summary that covers the FULL scope of changes (mention all major changes, not just one)
+- "summary": a clear 1-sentence summary written in plain English describing what code changes were made
 - "what_changed": a FILE-BY-FILE breakdown. For EACH changed file, write one line in this exact format: "• filename: what was changed and why". Cover every file. Be specific — mention function names, class names, and concrete modifications.
 - "reasoning": why this is worth remembering for future development
 - "tags": a list of relevant keyword tags
 - "related_files": MUST include ALL files from the "Changed files" list above. Do not omit any.
 """
 
-        
         # Send the prompt to Groq's AI!
         response = self.client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
-            temperature=0.1  # Low temperature = more predictable, structured output
+            temperature=0.1,  # Low temperature = more predictable, structured output
+            response_format={"type": "json_object"}
         )
         
         # The AI's answer is a JSON string, so we parse it into a Python dictionary

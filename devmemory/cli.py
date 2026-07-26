@@ -46,6 +46,10 @@ def main():
     search_parser = subparsers.add_parser("search", help="Search your memories")
     search_parser.add_argument("query", type=str, help="What you want to search for")
 
+    list_parser = subparsers.add_parser("list", help="List all memories chronologically (date & time wise)")
+    list_parser.add_argument("--limit", type=int, default=20, help="Number of records to show (default: 20)")
+    list_parser.add_argument("--asc", action="store_true", help="Show oldest first (default: newest first)")
+
     subparsers.add_parser("install-hook", help="Install post-commit Git hook")
     subparsers.add_parser("log-git", help="Capture the latest Git commit into devmemory")
 
@@ -84,6 +88,55 @@ def main():
             date_str = record.timestamp.strftime('%b %d, %Y • %I:%M %p')
 
             # Header badge + title summary
+            title_text = f"[{badge_style}] {record.type.value.upper()} [/{badge_style}]  [bold white]{record.summary}[/bold white]"
+
+            body_lines = [
+                f"[dim]🕒 {date_str}[/dim]"
+            ]
+
+            if record.what_changed:
+                body_lines.append(f"\n[bold cyan]🔧 What changed:[/bold cyan]\n  {record.what_changed}")
+                
+            if record.related_files:
+                files_str = " ".join([f"[reverse cyan] {f} [/reverse cyan]" for f in record.related_files])
+                body_lines.append(f"\n[bold yellow]📁 Files:[/bold yellow] {files_str}")
+                
+            if record.tags:
+                tags_str = " ".join([f"[bold black on bright_black] #{t} [/bold black on bright_black]" for t in record.tags])
+                body_lines.append(f"\n[bold green]🏷️  Tags:[/bold green] {tags_str}")
+
+            body_lines.append(f"\n[bold magenta]💡 Reasoning:[/bold magenta]\n  [italic]{record.reasoning}[/italic]")
+
+            body_content = "\n".join(body_lines)
+
+            console.print(Panel(
+                body_content,
+                title=title_text,
+                title_align="left",
+                border_style=border_color,
+                box=ROUNDED,
+                padding=(1, 2)
+            ))
+            console.print()
+
+    elif args.command == "list":
+        console.print(Rule("[bold magenta]🧠 devmemory timeline[/bold magenta]", style="dim"))
+        order = "ASC" if args.asc else "DESC"
+        with console.status("[bold cyan]Fetching memory timeline...[/bold cyan]", spinner="dots"):
+            memory = Memory(db_path=db_path)
+            results = memory.list_all(limit=args.limit, order=order)
+
+        if not results:
+            console.print("\n[yellow]No memories stored yet![/yellow]\n")
+            return
+
+        order_label = "oldest first" if args.asc else "newest first"
+        console.print(f"\n[dim]Showing {len(results)} memory record(s) ({order_label}):[/dim]\n")
+
+        for record in results:
+            badge_style, border_color = TYPE_STYLES.get(record.type.value, ("bold white on blue", "blue"))
+            date_str = record.timestamp.strftime('%b %d, %Y • %I:%M:%S %p')
+
             title_text = f"[{badge_style}] {record.type.value.upper()} [/{badge_style}]  [bold white]{record.summary}[/bold white]"
 
             body_lines = [

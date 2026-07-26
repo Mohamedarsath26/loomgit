@@ -139,8 +139,33 @@ class SQLiteStore:
             source_ref=row["source_ref"],
             timestamp=datetime.fromisoformat(row["timestamp"]), # Convert string back to datetime
             what_changed=row["what_changed"],
-            embedding=None # We will handle embeddings in Phase 4!
+            embedding=None
         )
+
+    def get_all_memory_records(self, limit: int = 50, order: str = "DESC") -> list[MemoryRecord]:
+        """Retrieves all MemoryRecords sorted by timestamp."""
+        cursor = self.conn.cursor()
+        order_str = "ASC" if order.upper() == "ASC" else "DESC"
+        query = f"SELECT * FROM memory_records ORDER BY timestamp {order_str} LIMIT ?"
+        cursor.execute(query, (limit,))
+        rows = cursor.fetchall()
+        
+        records = []
+        for row in rows:
+            records.append(MemoryRecord(
+                id=row["id"],
+                raw_event_id=row["raw_event_id"],
+                type=MemoryType(row["type"]),
+                summary=row["summary"],
+                reasoning=row["reasoning"],
+                tags=json.loads(row["tags"]),
+                related_files=json.loads(row["related_files"]),
+                source_ref=row["source_ref"],
+                timestamp=datetime.fromisoformat(row["timestamp"]),
+                what_changed=row["what_changed"],
+                embedding=None
+            ))
+        return records
 
 
     
