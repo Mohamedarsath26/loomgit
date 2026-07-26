@@ -41,16 +41,26 @@ class ExtractionPipeline:
         actual_files = event.metadata.get("changed_files", []) if event.metadata else []
         related_files = actual_files if actual_files else extracted_data.get("related_files", [])
 
+        # Safely extract and format fields to string format
+        raw_summary = extracted_data.get("summary", "No summary provided")
+        summary = " ".join(str(i) for i in raw_summary) if isinstance(raw_summary, list) else str(raw_summary)
+
+        raw_reasoning = extracted_data.get("reasoning", "No reasoning provided")
+        reasoning = " ".join(str(i) for i in raw_reasoning) if isinstance(raw_reasoning, list) else str(raw_reasoning)
+
+        raw_what_changed = extracted_data.get("what_changed", "")
+        what_changed = "\n".join(str(i) for i in raw_what_changed) if isinstance(raw_what_changed, list) else str(raw_what_changed)
+
         record = MemoryRecord(
             id=str(uuid.uuid4()),
             raw_event_id=event.id,
             type=record_type,
-            summary=extracted_data["summary"],
-            reasoning=extracted_data["reasoning"],
+            summary=summary,
+            reasoning=reasoning,
             tags=extracted_data.get("tags", []),
             related_files=related_files,
             source_ref=f"{event.source}:{event.id}",
-            what_changed=extracted_data.get("what_changed", ""),
+            what_changed=what_changed,
             timestamp=datetime.now()
         )
 
