@@ -1,5 +1,7 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Mohamedarsath26/loomgit/main/loomgit/web/logo.png" width="120" height="120" alt="loomgit logo" style="border-radius: 16px;">
+  <a href="https://github.com/Mohamedarsath26/loomgit">
+    <img src="https://raw.githubusercontent.com/Mohamedarsath26/loomgit/main/loomgit/web/logo.png" width="120" alt="loomgit logo">
+  </a>
 </p>
 
 <h1 align="center">loomgit</h1>
@@ -99,9 +101,7 @@ loomgit ui
 
 > **View Live Dashboard:** Open **[http://127.0.0.1:8001](http://127.0.0.1:8001)** in your web browser.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Mohamedarsath26/loomgit/main/loomgit/web/dashboard_preview.png" width="100%" alt="loomgit Kamino-inspired dark web dashboard preview" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
-</p>
+![loomgit Kamino-inspired dark web dashboard preview](https://raw.githubusercontent.com/Mohamedarsath26/loomgit/main/loomgit/web/dashboard_preview.png)
 
 ---
 
