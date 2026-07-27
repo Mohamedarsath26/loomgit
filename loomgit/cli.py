@@ -44,10 +44,12 @@ def main():
 
     search_parser = subparsers.add_parser("search", help="Search your memories")
     search_parser.add_argument("query", type=str, help="What you want to search for")
+    search_parser.add_argument("--all", action="store_true", help="Search across all projects/folders")
 
     list_parser = subparsers.add_parser("list", help="List all memories chronologically (date & time wise)")
     list_parser.add_argument("--limit", type=int, default=20, help="Number of records to show (default: 20)")
     list_parser.add_argument("--asc", action="store_true", help="Show oldest first (default: newest first)")
+    list_parser.add_argument("--all", action="store_true", help="List across all projects/folders")
 
     subparsers.add_parser("install-hook", help="Install post-commit Git hook")
     subparsers.add_parser("log-git", help="Capture the latest Git commit into loomgit")
@@ -87,15 +89,16 @@ def main():
     if args.command == "log":
         with console.status("[bold cyan]Processing memory with AI...[/bold cyan]", spinner="dots"):
             memory = Memory(db_path=db_path)
-            memory.capture(source="manual", raw_text=args.message)
+            memory.capture(source="manual", raw_text=args.message , cwd=Path.cwd())
         console.print("\n[bold green]✓[/bold green] [bold]Successfully logged memory to loomgit![/bold]\n")
         
     elif args.command == "search":
+        project_path = None if args.all else str(Path.cwd().resolve())
         console.print(Rule("[bold magenta]🧠 loomgit[/bold magenta]", style="dim"))
         
         with console.status(f"[bold cyan]Searching memories for:[/bold cyan] [italic]'{args.query}'[/italic]...", spinner="dots"):
             memory = Memory(db_path=db_path)
-            results = memory.search(args.query)
+            results = memory.search(args.query, project_path=project_path)
 
         if not results:
             console.print(f"\n[yellow]No memories found matching:[/yellow] [italic]'{args.query}'[/italic]\n")
@@ -141,11 +144,12 @@ def main():
             console.print()
 
     elif args.command == "list":
+        project_path = None if args.all else str(Path.cwd().resolve())
         console.print(Rule("[bold magenta]🧠 loomgit timeline[/bold magenta]", style="dim"))
         order = "ASC" if args.asc else "DESC"
         with console.status("[bold cyan]Fetching memory timeline...[/bold cyan]", spinner="dots"):
             memory = Memory(db_path=db_path)
-            results = memory.list_all(limit=args.limit, order=order)
+            results = memory.list_all(limit=args.limit, order=order, project_path=project_path)
 
         if not results:
             console.print("\n[yellow]No memories stored yet![/yellow]\n")
@@ -219,7 +223,7 @@ def main():
     elif args.command == "log-git":
         with console.status("[bold cyan]Extracting & embedding Git commit...[/bold cyan]", spinner="dots"):
             memory = Memory(db_path=db_path)
-            captured = memory.capture(source="git")
+            captured = memory.capture(source="git", cwd=Path.cwd())
         if captured:
             console.print("\n[bold green]✓[/bold green] [bold]Captured Git commit memory![/bold]\n")
         else:
@@ -312,9 +316,19 @@ def main():
         import uvicorn
         import webbrowser
         import threading
+        import socket
 
-        port = args.port
+        def get_free_port(target_host: str, target_port: int) -> int:
+            p = target_port
+            for _ in range(20):
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    if s.connect_ex((target_host, p)) != 0:
+                        return p
+                    p += 1
+            return target_port
+
         host = args.host
+        port = get_free_port(host, args.port)
         url = f"http://{host}:{port}"
 
         console.print(f"\n[bold cyan]🧠 Starting loomgit Local Web Dashboard...[/bold cyan]")

@@ -1,6 +1,6 @@
 from pathlib import Path
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams, PointStruct
+from qdrant_client.models import Distance, VectorParams, PointStruct, Filter, FieldCondition, MatchValue
 from loomgit.models import MemoryRecord
 
 class QdrantVectorStore:
@@ -37,16 +37,33 @@ class QdrantVectorStore:
                 PointStruct(
                     id=point_id,
                     vector=embedding,
-                    payload={"record_id": record.id}
+                    payload = {
+                    "type": record.type.value,
+                    "summary": record.summary,
+                    "project_path": record.project_path,
+                    "project_name": record.project_name,
+                }
                 )
             ]
         )
 
-    def search(self, query_embedding: list[float], limit: int = 5) -> list[str]:
-        """Performs real mathematical cosine similarity search!"""
+    def search(self, query_embedding: list[float], limit: int = 5, project_path: str | None = None) -> list[str]:
+        """Searches for similar memories and returns a list of matching record IDs."""
+        query_filter = None
+        if project_path:
+            query_filter = Filter(
+                must=[
+                    FieldCondition(
+                        key="project_path",
+                        match=MatchValue(value=project_path)
+                    )
+                ]
+            )
+
         results = self.client.query_points(
             collection_name=self.collection_name,
             query=query_embedding,
+            query_filter=query_filter,
             limit=limit
-        ).points
-        return [hit.payload["record_id"] for hit in results]
+        )
+        return [str(point.id) for point in results.points]

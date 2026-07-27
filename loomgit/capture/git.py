@@ -45,6 +45,7 @@ def get_last_commit_info(repo_path: Path | str | None = None) -> dict:
 def create_git_event(repo_path: Path | str | None = None) -> RawEvent:
     """Extracts git commit details and converts them into a RawEvent object."""
     info = get_last_commit_info(repo_path)
+    folder = Path(repo_path).resolve() if repo_path else Path.cwd().resolve()
     
     event = RawEvent(
         id=str(uuid.uuid4()),
@@ -57,7 +58,9 @@ def create_git_event(repo_path: Path | str | None = None) -> RawEvent:
             "diff": info["diff"],
         },
         timestamp=datetime.now(),
-        processed=False
+        processed=False,
+        project_path=str(folder),
+        project_name=folder.name,
     )
     
     return event

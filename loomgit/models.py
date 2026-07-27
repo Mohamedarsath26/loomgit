@@ -10,6 +10,8 @@ class RawEvent(BaseModel):
     metadata : dict
     timestamp : datetime
     processed : bool = False
+    project_path: str = ""
+    project_name: str = ""
 
 class MemoryType(str, Enum):
     DECISION = "decision"
@@ -34,3 +36,5 @@ class MemoryRecord(BaseModel):
     timestamp : datetime
     embedding : list[float] | None = None
     what_changed : str = ""
+    project_path: str = ""
+    project_name: str = ""

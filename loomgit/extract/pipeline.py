@@ -61,7 +61,9 @@ class ExtractionPipeline:
             related_files=related_files,
             source_ref=f"{event.source}:{event.id}",
             what_changed=what_changed,
-            timestamp=datetime.now()
+            timestamp=datetime.now(),
+            project_path=event.project_path,
+            project_name=event.project_name,
         )
 
         self.store.save_memory_record(record)

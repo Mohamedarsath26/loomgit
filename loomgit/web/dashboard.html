@@ -3,621 +3,658 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>loomgit Dashboard - Developer Context Engine</title>
-    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <title>loomgit — AI Developer Context Engine</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --bg-primary: #0b0f19;
-            --bg-secondary: #111827;
-            --bg-card: rgba(17, 24, 39, 0.7);
-            --bg-hover: #1f293d;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --border-glow: rgba(99, 102, 241, 0.3);
-            --text-primary: #f3f4f6;
-            --text-secondary: #9ca3af;
-            --text-muted: #6b7280;
-            --accent-primary: #6366f1;
-            --accent-glow: rgba(99, 102, 241, 0.4);
-            --accent-cyan: #06b6d4;
-            --accent-magenta: #d946ef;
-            --accent-green: #10b981;
-            --accent-amber: #f59e0b;
-            --accent-red: #ef4444;
+            /* Kamino-inspired Dark Theme — Neon Lime Accents */
+            --bg-page: #09090B;
+            --bg-surface: #111113;
+            --bg-card: #151518;
+            --bg-card-hover: #1A1A1E;
+            --bg-elevated: #1E1E22;
+            --bg-input: #151518;
+
+            --border: rgba(255, 255, 255, 0.06);
+            --border-hover: rgba(255, 255, 255, 0.1);
+            --border-accent: rgba(190, 242, 100, 0.3);
+
+            --text-main: #F4F4F5;
+            --text-sub: #A1A1AA;
+            --text-muted: #52525B;
+
+            --accent: #BEF264;
+            --accent-hover: #A3E635;
+            --accent-dim: rgba(190, 242, 100, 0.1);
+            --accent-text: #09090B;
+
+            /* Category Colors — Muted Neon */
+            --cat-bug: #F87171;
+            --cat-bug-bg: rgba(248, 113, 113, 0.08);
+            --cat-bug-border: rgba(248, 113, 113, 0.2);
+
+            --cat-decision: #60A5FA;
+            --cat-decision-bg: rgba(96, 165, 250, 0.08);
+            --cat-decision-border: rgba(96, 165, 250, 0.2);
+
+            --cat-arch: #C084FC;
+            --cat-arch-bg: rgba(192, 132, 252, 0.08);
+            --cat-arch-border: rgba(192, 132, 252, 0.2);
+
+            --cat-tool: #34D399;
+            --cat-tool-bg: rgba(52, 211, 153, 0.08);
+            --cat-tool-border: rgba(52, 211, 153, 0.2);
+
+            --cat-lesson: #FBBF24;
+            --cat-lesson-bg: rgba(251, 191, 36, 0.08);
+            --cat-lesson-border: rgba(251, 191, 36, 0.2);
+
+            --cat-note: #818CF8;
+            --cat-note-bg: rgba(129, 140, 248, 0.08);
+            --cat-note-border: rgba(129, 140, 248, 0.2);
+
             --radius-sm: 8px;
             --radius-md: 12px;
             --radius-lg: 16px;
-            --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
-            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
+
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
+            background-color: var(--bg-page);
+            color: var(--text-main);
             font-family: var(--font-sans);
-            line-height: 1.5;
+            font-size: 14px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
             min-height: 100vh;
-            background-image: 
-                radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
-                radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.08) 0%, transparent 40%);
-            background-attachment: fixed;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem;
-        }
-
-        /* Header */
-        header {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
+        }
+
+        .app-shell { display: flex; width: 100%; min-height: 100vh; }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: 240px;
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border);
+            padding: 1.25rem 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            flex-shrink: 0;
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.6rem;
+            padding: 0.25rem 0.5rem;
         }
 
-        .brand-icon {
-            font-size: 2rem;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5));
-        }
-
-        .brand-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.025em;
-            background: linear-gradient(to right, #ffffff, #9ca3af);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .brand-badge {
-            background: rgba(99, 102, 241, 0.15);
-            color: #818cf8;
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            font-family: var(--font-mono);
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-primary), #4f46e5);
-            color: #ffffff;
-            border: none;
-            padding: 0.6rem 1.25rem;
+        .brand-logo {
+            width: 28px;
+            height: 28px;
             border-radius: var(--radius-sm);
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+            object-fit: cover;
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.25rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--bg-card);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 1.25rem;
-            transition: all 0.2s ease;
-        }
-
-        .stat-card:hover {
-            border-color: var(--border-glow);
-            transform: translateY(-2px);
-        }
-
-        .stat-label {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--text-primary);
+        .brand-name {
+            font-size: 1rem;
+            font-weight: 800;
             letter-spacing: -0.03em;
+            color: var(--text-main);
         }
 
-        /* Controls Section */
-        .controls-card {
-            background: var(--bg-card);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 1.25rem;
-            margin-bottom: 2rem;
+        .brand-tag {
+            font-size: 0.6rem;
+            background: var(--accent-dim);
+            color: var(--accent);
+            padding: 0.1rem 0.35rem;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            border: 1px solid var(--border-accent);
+        }
+
+        .sidebar-section-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            padding: 0 0.5rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .project-dropdown {
+            width: 100%;
+            background: var(--bg-input);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 0.5rem 0.6rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.82rem;
+            font-family: var(--font-sans);
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.15s;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2352525B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.6rem center;
+        }
+
+        .project-dropdown option { background: var(--bg-card); color: var(--text-main); }
+        .project-dropdown:hover { border-color: var(--border-hover); }
+        .project-dropdown:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-dim); }
+
+        .nav-list {
+            list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 1.25rem;
+            gap: 1px;
         }
 
-        .search-box {
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 0.45rem 0.65rem;
+            border-radius: var(--radius-sm);
+            color: var(--text-sub);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.12s ease;
+            user-select: none;
+        }
+
+        .nav-item:hover { background: rgba(255,255,255,0.03); color: var(--text-main); }
+        .nav-item.active { background: var(--accent-dim); color: var(--accent); font-weight: 600; }
+
+        .nav-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .nav-dot.dot-all { background: var(--accent); }
+        .nav-dot.dot-bug { background: var(--cat-bug); }
+        .nav-dot.dot-decision { background: var(--cat-decision); }
+        .nav-dot.dot-arch { background: var(--cat-arch); }
+        .nav-dot.dot-tool { background: var(--cat-tool); }
+        .nav-dot.dot-lesson { background: var(--cat-lesson); }
+        .nav-dot.dot-note { background: var(--cat-note); }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 0.75rem 0.5rem 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .engine-status {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .status-dot {
+            width: 5px;
+            height: 5px;
+            background: #22C55E;
+            border-radius: 50%;
+            box-shadow: 0 0 4px #22C55E;
+        }
+
+        /* ── Main Content ── */
+        .main-content {
+            flex: 1;
+            padding: 1.5rem 2rem;
+            overflow-y: auto;
+            max-width: 1080px;
+        }
+
+        /* ── Top Bar ── */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-wrapper {
             position: relative;
-            width: 100%;
+            flex: 1;
+            max-width: 520px;
         }
 
-        .search-icon {
+        .search-icon-svg {
             position: absolute;
-            left: 1rem;
+            left: 0.8rem;
             top: 50%;
             transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
             color: var(--text-muted);
-            font-size: 1.1rem;
         }
 
         .search-input {
             width: 100%;
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            padding: 0.85rem 1rem 0.85rem 2.8rem;
-            color: var(--text-primary);
-            font-size: 0.95rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 0.6rem 2.5rem 0.6rem 2.4rem;
+            color: var(--text-main);
+            font-size: 0.88rem;
             font-family: var(--font-sans);
-            transition: all 0.2s ease;
-        }
-
-        .search-input:focus {
             outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px var(--accent-glow);
+            transition: all 0.15s ease;
         }
 
-        /* Filter Pills */
-        .filter-bar {
+        .search-input::placeholder { color: var(--text-muted); }
+        .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-dim); }
+
+        .kbd-hint {
+            position: absolute;
+            right: 0.7rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.62rem;
+            font-family: var(--font-mono);
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--accent-text);
+            border: none;
+            padding: 0.55rem 1rem;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 0.82rem;
+            font-family: var(--font-sans);
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
+            gap: 0.35rem;
+            transition: background 0.15s ease;
+            white-space: nowrap;
         }
 
-        .filter-pill {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            padding: 0.4rem 0.85rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
+        .btn-primary:hover { background: var(--accent-hover); }
+
+        /* ── Stats Row — Kamino-style ── */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 1rem 1.1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+            opacity: 0.4;
+        }
+
+        .stat-number {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--text-main);
+        }
+
+        .stat-label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
             font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            user-select: none;
+            margin-top: 0.1rem;
         }
 
-        .filter-pill:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-primary);
-        }
-
-        .filter-pill.active {
-            background: var(--accent-primary);
-            color: #ffffff;
-            border-color: var(--accent-primary);
-            box-shadow: 0 2px 10px var(--accent-glow);
-        }
-
-        /* Memory Stream Timeline */
-        .section-header {
+        /* ── Feed ── */
+        .feed-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 1.25rem;
+            margin-bottom: 0.85rem;
         }
 
-        .section-title {
-            font-size: 1.1rem;
+        .feed-title {
+            font-size: 0.88rem;
             font-weight: 600;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            color: var(--text-sub);
         }
 
-        .memory-count-badge {
-            font-size: 0.8rem;
+        .feed-count {
+            font-size: 0.72rem;
             color: var(--text-muted);
-            font-weight: 400;
+            font-family: var(--font-mono);
         }
 
-        .memory-stream {
+        .memory-feed {
             display: flex;
             flex-direction: column;
-            gap: 1.25rem;
+            gap: 0.6rem;
         }
 
-        /* Memory Card */
+        /* ── Memory Card ── */
         .memory-card {
             background: var(--bg-card);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border);
             border-radius: var(--radius-md);
-            padding: 1.5rem;
-            transition: all 0.25 ease;
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--shadow-card);
+            padding: 1rem 1.15rem;
+            transition: all 0.15s ease;
         }
 
         .memory-card:hover {
-            border-color: var(--border-glow);
-            transform: translateY(-2px);
+            border-color: var(--border-hover);
+            background: var(--bg-card-hover);
         }
-
-        .memory-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--accent-primary);
-        }
-
-        .memory-card.type-bug_fix::before { background: var(--accent-red); }
-        .memory-card.type-decision::before { background: var(--accent-cyan); }
-        .memory-card.type-architecture::before { background: var(--accent-magenta); }
-        .memory-card.type-tool_usage::before { background: var(--accent-green); }
-        .memory-card.type-lesson_learned::before { background: var(--accent-amber); }
-        .memory-card.type-note::before { background: var(--accent-primary); }
 
         .card-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 0.75rem;
+            gap: 0.5rem;
+            margin-bottom: 0.45rem;
         }
 
-        .badge-type {
-            font-size: 0.75rem;
+        .badge {
+            font-size: 0.65rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 0.25rem 0.65rem;
-            border-radius: 4px;
+            letter-spacing: 0.04em;
+            padding: 0.18rem 0.55rem;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            border: 1px solid;
+        }
+
+        .badge-bug_fix { background: var(--cat-bug-bg); color: var(--cat-bug); border-color: var(--cat-bug-border); }
+        .badge-decision { background: var(--cat-decision-bg); color: var(--cat-decision); border-color: var(--cat-decision-border); }
+        .badge-architecture { background: var(--cat-arch-bg); color: var(--cat-arch); border-color: var(--cat-arch-border); }
+        .badge-tool_usage { background: var(--cat-tool-bg); color: var(--cat-tool); border-color: var(--cat-tool-border); }
+        .badge-lesson_learned { background: var(--cat-lesson-bg); color: var(--cat-lesson); border-color: var(--cat-lesson-border); }
+        .badge-note { background: var(--cat-note-bg); color: var(--cat-note); border-color: var(--cat-note-border); }
+
+        .card-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.72rem;
+            color: var(--text-muted);
             font-family: var(--font-mono);
         }
 
-        .badge-bug_fix { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
-        .badge-decision { background: rgba(6, 182, 212, 0.2); color: #67e8f9; border: 1px solid rgba(6, 182, 212, 0.4); }
-        .badge-architecture { background: rgba(217, 70, 239, 0.2); color: #f5d0fe; border: 1px solid rgba(217, 70, 239, 0.4); }
-        .badge-tool_usage { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); }
-        .badge-lesson_learned { background: rgba(245, 158, 11, 0.2); color: #fde68a; border: 1px solid rgba(245, 158, 11, 0.4); }
-        .badge-note { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.4); }
-
-        .card-time {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            font-family: var(--font-mono);
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
+        .project-chip {
+            background: var(--accent-dim);
+            color: var(--accent);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-accent);
+            font-weight: 600;
+            font-size: 0.68rem;
         }
 
         .card-summary {
-            font-size: 1.05rem;
+            font-size: 0.92rem;
             font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.85rem;
-            line-height: 1.4;
+            color: var(--text-main);
+            margin-bottom: 0.45rem;
+            line-height: 1.45;
         }
 
-        .card-block {
-            margin-top: 0.85rem;
-        }
-
-        .block-title {
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-secondary);
-            margin-bottom: 0.4rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .changed-text {
-            font-size: 0.9rem;
-            color: #d1d5db;
-            white-space: pre-wrap;
-            background: rgba(15, 23, 42, 0.6);
-            padding: 0.75rem;
+        .code-block {
+            background: var(--bg-page);
+            border: 1px solid var(--border);
             border-radius: var(--radius-sm);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            font-family: var(--font-sans);
-        }
-
-        .files-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 0.4rem;
-        }
-
-        .file-tag {
-            background: rgba(6, 182, 212, 0.15);
-            color: #67e8f9;
-            border: 1px solid rgba(6, 182, 212, 0.3);
-            padding: 0.2rem 0.6rem;
-            border-radius: 4px;
-            font-size: 0.78rem;
+            padding: 0.6rem 0.8rem;
             font-family: var(--font-mono);
+            font-size: 0.78rem;
+            color: var(--text-sub);
+            white-space: pre-wrap;
+            margin-top: 0.45rem;
+            line-height: 1.55;
         }
 
-        .tags-list {
+        .files-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.4rem;
+            gap: 0.3rem;
+            margin-top: 0.45rem;
+        }
+
+        .file-chip {
+            font-size: 0.7rem;
+            font-family: var(--font-mono);
+            color: #22D3EE;
+            background: rgba(34, 211, 238, 0.08);
+            border: 1px solid rgba(34, 211, 238, 0.15);
+            padding: 0.08rem 0.4rem;
+            border-radius: 4px;
+        }
+
+        .tags-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
             margin-top: 0.4rem;
         }
 
-        .tag-pill {
-            background: rgba(255, 255, 255, 0.06);
-            color: #9ca3af;
-            padding: 0.15rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .reasoning-box {
-            background: rgba(99, 102, 241, 0.08);
-            border-left: 3px solid var(--accent-primary);
-            padding: 0.75rem 1rem;
-            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-            font-size: 0.88rem;
-            color: #c7d2fe;
-            font-style: italic;
-            margin-top: 0.85rem;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: var(--bg-card);
-            border: 1px dashed var(--border-color);
-            border-radius: var(--radius-md);
+        .tag-chip {
+            font-size: 0.68rem;
             color: var(--text-muted);
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            padding: 0.06rem 0.35rem;
+            border-radius: 4px;
         }
 
-        .empty-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.6;
+        .reasoning-block {
+            font-size: 0.8rem;
+            color: var(--cat-arch);
+            background: var(--cat-arch-bg);
+            border-left: 3px solid var(--cat-arch);
+            padding: 0.4rem 0.7rem;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            margin-top: 0.45rem;
+            font-style: italic;
+            line-height: 1.5;
         }
 
-        /* Modal */
+        .empty-feed {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+        }
+
+        /* ── Modal ── */
         .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.75);
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s ease;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 100; opacity: 0; pointer-events: none;
+            transition: opacity 0.2s ease;
         }
 
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
 
-        .modal {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
+        .modal-box {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
             border-radius: var(--radius-lg);
-            width: 90%;
-            max-width: 540px;
-            padding: 1.75rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-            transform: scale(0.95);
-            transition: transform 0.25s ease;
-        }
-
-        .modal-overlay.active .modal {
-            transform: scale(1);
-        }
-
-        .modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.25rem;
+            width: 100%; max-width: 500px;
+            padding: 1.5rem;
         }
 
         .modal-title {
-            font-size: 1.2rem;
+            font-size: 1.05rem;
             font-weight: 700;
-            color: var(--text-primary);
+            margin-bottom: 0.35rem;
+            color: var(--text-main);
         }
 
-        .close-btn {
-            background: transparent;
-            border: none;
+        .modal-desc {
+            font-size: 0.8rem;
             color: var(--text-muted);
-            font-size: 1.4rem;
-            cursor: pointer;
-            line-height: 1;
-        }
-
-        .close-btn:hover {
-            color: var(--text-primary);
+            margin-bottom: 1rem;
         }
 
         .modal-textarea {
-            width: 100%;
-            min-height: 120px;
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid var(--border-color);
+            width: 100%; height: 110px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
             border-radius: var(--radius-sm);
-            padding: 0.85rem;
-            color: var(--text-primary);
+            padding: 0.7rem 0.85rem;
+            color: var(--text-main);
             font-family: var(--font-sans);
-            font-size: 0.95rem;
-            resize: vertical;
-            margin-bottom: 1.25rem;
+            font-size: 0.88rem;
+            outline: none; resize: none;
+            margin-bottom: 1rem;
+            transition: border 0.15s ease;
         }
 
-        .modal-textarea:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px var(--accent-glow);
+        .modal-textarea::placeholder { color: var(--text-muted); }
+        .modal-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-dim); }
+
+        .modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-sub);
+            padding: 0.45rem 0.85rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.82rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.12s ease;
         }
 
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        .btn-ghost:hover { background: var(--bg-elevated); }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header>
+    <div class="app-shell">
+        <!-- Sidebar -->
+        <div class="sidebar">
             <div class="brand">
-                <span class="brand-icon">🧠</span>
-                <span class="brand-title">loomgit</span>
-                <span class="brand-badge">v0.1.0</span>
+                <img src="/logo.png" alt="loomgit" class="brand-logo" onerror="this.style.display='none'">
+                <span class="brand-name">loomgit</span>
+                <span class="brand-tag">v0.1</span>
             </div>
-            <div class="header-actions">
+
+            <div>
+                <div class="sidebar-section-label">Project</div>
+                <select id="project-select" class="project-dropdown" onchange="onProjectChange()">
+                    <option value="">All Projects</option>
+                </select>
+            </div>
+
+            <div>
+                <div class="sidebar-section-label">Filters</div>
+                <ul class="nav-list" id="sidebar-filters">
+                    <li class="nav-item active" data-type="ALL"><span class="nav-dot dot-all"></span>All Memories</li>
+                    <li class="nav-item" data-type="bug_fix"><span class="nav-dot dot-bug"></span>Bug Fixes</li>
+                    <li class="nav-item" data-type="decision"><span class="nav-dot dot-decision"></span>Decisions</li>
+                    <li class="nav-item" data-type="architecture"><span class="nav-dot dot-arch"></span>Architecture</li>
+                    <li class="nav-item" data-type="tool_usage"><span class="nav-dot dot-tool"></span>Tool Usage</li>
+                    <li class="nav-item" data-type="lesson_learned"><span class="nav-dot dot-lesson"></span>Lessons Learned</li>
+                    <li class="nav-item" data-type="note"><span class="nav-dot dot-note"></span>Notes</li>
+                </ul>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="engine-status">
+                    <span class="status-dot"></span>
+                    <span>Qdrant + Groq Active</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main -->
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="search-wrapper">
+                    <svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    <input type="text" id="search-input" class="search-input" placeholder="Search developer context...">
+                    <span class="kbd-hint">/</span>
+                </div>
                 <button class="btn-primary" onclick="openLogModal()">
-                    <span>+</span> Log Memory
+                    <span>＋</span> Log Memory
                 </button>
             </div>
-        </header>
 
-        <!-- Stats Grid -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-label">📚 Total Memories</div>
-                <div class="stat-value" id="stat-total">--</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">⚡ Top Memory Category</div>
-                <div class="stat-value" id="stat-top-category">--</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">📁 Tracked Files</div>
-                <div class="stat-value" id="stat-files">--</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">🏷️ Keyword Tags</div>
-                <div class="stat-value" id="stat-tags">--</div>
-            </div>
-        </div>
-
-        <!-- Controls (Search & Filter) -->
-        <div class="controls-card">
-            <div class="search-box">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="search-input" class="search-input" placeholder="Search developer memories semantically (e.g. 'groq validation', 'git hook', 'database schema')...">
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-total">--</div>
+                    <div class="stat-label">Total Memories</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-top-category">--</div>
+                    <div class="stat-label">Top Category</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-files">--</div>
+                    <div class="stat-label">Tracked Files</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="stat-tags">--</div>
+                    <div class="stat-label">Keyword Tags</div>
+                </div>
             </div>
 
-            <div class="filter-bar" id="filter-bar">
-                <button class="filter-pill active" data-type="ALL">All Memories</button>
-                <button class="filter-pill" data-type="bug_fix">🐛 Bug Fixes</button>
-                <button class="filter-pill" data-type="decision">🎯 Decisions</button>
-                <button class="filter-pill" data-type="architecture">🏗️ Architecture</button>
-                <button class="filter-pill" data-type="tool_usage">🛠️ Tool Usage</button>
-                <button class="filter-pill" data-type="lesson_learned">💡 Lessons Learned</button>
-                <button class="filter-pill" data-type="note">📝 Notes</button>
+            <div class="feed-header">
+                <div class="feed-title">Developer Context Timeline</div>
+                <div class="feed-count" id="feed-count">0 items</div>
             </div>
-        </div>
 
-        <!-- Memory Stream -->
-        <div class="section-header">
-            <h2 class="section-title">
-                <span>🧠 Developer Memory Stream</span>
-                <span class="memory-count-badge" id="memory-count">Showing 0 items</span>
-            </h2>
-        </div>
-
-        <div class="memory-stream" id="memory-stream">
-            <!-- Dynamic cards will be rendered here -->
+            <div id="memory-feed" class="memory-feed"></div>
         </div>
     </div>
 
-    <!-- Modal for Manual Log -->
+    <!-- Modal -->
     <div class="modal-overlay" id="log-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title">Log a New Memory</h3>
-                <button class="close-btn" onclick="closeLogModal()">&times;</button>
-            </div>
-            <textarea id="log-text" class="modal-textarea" placeholder="What did you learn, fix, or decide recently? (e.g., 'We upgraded Groq model to llama-3.3-70b to support JSON mode fallback')"></textarea>
-            <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
-                <button class="filter-pill" onclick="closeLogModal()">Cancel</button>
-                <button class="btn-primary" id="save-log-btn" onclick="submitLogMemory()">
-                    <span id="save-btn-text">Log Memory</span>
-                </button>
+        <div class="modal-box">
+            <div class="modal-title">Log Developer Memory</div>
+            <div class="modal-desc">Groq LLM will auto-structure and index your entry into loomgit.</div>
+            <textarea id="modal-input" class="modal-textarea" placeholder="e.g. Switched from REST to gRPC for inter-service calls to reduce latency..."></textarea>
+            <div class="modal-actions">
+                <button class="btn-ghost" onclick="closeLogModal()">Cancel</button>
+                <button id="modal-submit-btn" class="btn-primary" onclick="submitLogMemory()">Save Memory</button>
             </div>
         </div>
     </div>
@@ -625,189 +662,180 @@
     <script>
         let allMemories = [];
         let activeFilter = 'ALL';
-        let searchDebounceTimer = null;
+        let selectedProjectPath = '';
+        let searchDebounce = null;
 
         document.addEventListener('DOMContentLoaded', () => {
+            fetchProjects();
             fetchStats();
             fetchMemories();
 
-            // Search input listener
-            document.getElementById('search-input').addEventListener('input', (e) => {
-                clearTimeout(searchDebounceTimer);
-                const query = e.target.value.trim();
-                searchDebounceTimer = setTimeout(() => {
-                    if (query.length > 0) {
-                        performSearch(query);
-                    } else {
-                        fetchMemories();
-                    }
-                }, 300);
+            document.addEventListener('keydown', (e) => {
+                if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                    document.getElementById('search-input').focus();
+                }
+                if (e.key === 'Escape') closeLogModal();
             });
 
-            // Filter pills listener
-            document.getElementById('filter-bar').addEventListener('click', (e) => {
-                const pill = e.target.closest('.filter-pill');
-                if (!pill) return;
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                clearTimeout(searchDebounce);
+                const query = e.target.value.trim();
+                searchDebounce = setTimeout(() => {
+                    if (query.length > 0) performSearch(query);
+                    else fetchMemories();
+                }, 250);
+            });
 
-                document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-                pill.classList.add('active');
-
-                activeFilter = pill.getAttribute('data-type');
-                renderMemories();
+            document.getElementById('sidebar-filters').addEventListener('click', (e) => {
+                const li = e.target.closest('.nav-item');
+                if (!li) return;
+                document.querySelectorAll('#sidebar-filters .nav-item').forEach(el => el.classList.remove('active'));
+                li.classList.add('active');
+                activeFilter = li.getAttribute('data-type');
+                renderFeed();
             });
         });
 
+        async function fetchProjects() {
+            try {
+                const res = await fetch('/api/projects');
+                const projects = await res.json();
+                const select = document.getElementById('project-select');
+                select.innerHTML = '<option value="">All Projects</option>';
+                projects.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.path;
+                    opt.textContent = p.name;
+                    select.appendChild(opt);
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        function onProjectChange() {
+            selectedProjectPath = document.getElementById('project-select').value;
+            fetchStats();
+            const q = document.getElementById('search-input').value.trim();
+            if (q.length > 0) performSearch(q);
+            else fetchMemories();
+        }
+
         async function fetchStats() {
             try {
-                const res = await fetch('/api/stats');
-                const data = await res.json();
-                document.getElementById('stat-total').textContent = data.total_memories || 0;
-                document.getElementById('stat-files').textContent = data.top_files_count || 0;
-                document.getElementById('stat-tags').textContent = data.top_tags_count || 0;
-
-                const topCategory = data.top_category ? data.top_category.toUpperCase() : 'NONE';
-                document.getElementById('stat-top-category').textContent = topCategory;
-            } catch (err) {
-                console.error('Failed to fetch stats:', err);
-            }
+                const url = selectedProjectPath
+                    ? `/api/stats?project_path=${encodeURIComponent(selectedProjectPath)}`
+                    : '/api/stats';
+                const res = await fetch(url);
+                const d = await res.json();
+                document.getElementById('stat-total').textContent = d.total_memories || 0;
+                document.getElementById('stat-files').textContent = d.top_files_count || 0;
+                document.getElementById('stat-tags').textContent = d.top_tags_count || 0;
+                document.getElementById('stat-top-category').textContent = d.top_category ? d.top_category.toUpperCase() : 'NONE';
+            } catch (err) { console.error(err); }
         }
 
         async function fetchMemories() {
             try {
-                const res = await fetch('/api/memories?limit=50');
+                const url = selectedProjectPath
+                    ? `/api/memories?limit=50&project_path=${encodeURIComponent(selectedProjectPath)}`
+                    : '/api/memories?limit=50';
+                const res = await fetch(url);
                 allMemories = await res.json();
-                renderMemories();
-            } catch (err) {
-                console.error('Failed to fetch memories:', err);
-            }
+                renderFeed();
+            } catch (err) { console.error(err); }
         }
 
         async function performSearch(query) {
             try {
-                const res = await fetch(`/api/search?q=${encodeURIComponent(query)}&limit=15`);
+                activeFilter = 'ALL';
+                document.querySelectorAll('#sidebar-filters .nav-item').forEach(el => el.classList.remove('active'));
+                const allEl = document.querySelector('#sidebar-filters .nav-item[data-type="ALL"]');
+                if (allEl) allEl.classList.add('active');
+
+                let url = `/api/search?q=${encodeURIComponent(query)}&limit=25`;
+                if (selectedProjectPath) url += `&project_path=${encodeURIComponent(selectedProjectPath)}`;
+                const res = await fetch(url);
                 allMemories = await res.json();
-                renderMemories();
-            } catch (err) {
-                console.error('Search failed:', err);
-            }
+                renderFeed();
+            } catch (err) { console.error(err); }
         }
 
-        function renderMemories() {
-            const container = document.getElementById('memory-stream');
+        function renderFeed() {
+            const container = document.getElementById('memory-feed');
             let filtered = allMemories;
-
             if (activeFilter !== 'ALL') {
                 filtered = allMemories.filter(m => m.type.toLowerCase() === activeFilter.toLowerCase());
             }
-
-            document.getElementById('memory-count').textContent = `Showing ${filtered.length} item(s)`;
+            document.getElementById('feed-count').textContent = `${filtered.length} item(s)`;
 
             if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">🔍</div>
-                        <h3>No matching developer memories found</h3>
-                        <p style="margin-top: 0.5rem;">Try adjusting your search query or filter criteria.</p>
-                    </div>
-                `;
+                container.innerHTML = '<div class="empty-feed"><p>No developer memories found.</p></div>';
                 return;
             }
 
             container.innerHTML = filtered.map(m => {
-                const formattedDate = new Date(m.timestamp).toLocaleString('en-US', {
-                    month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                const dateStr = new Date(m.timestamp).toLocaleDateString('en-US', {
+                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
                 });
-
-                const filesHtml = m.related_files && m.related_files.length > 0
-                    ? `<div class="card-block">
-                        <div class="block-title">📁 Files</div>
-                        <div class="files-list">${m.related_files.map(f => `<span class="file-tag">${escapeHtml(f)}</span>`).join('')}</div>
-                       </div>`
-                    : '';
-
-                const tagsHtml = m.tags && m.tags.length > 0
-                    ? `<div class="tags-list">${m.tags.map(t => `<span class="tag-pill">#${escapeHtml(t)}</span>`).join('')}</div>`
-                    : '';
-
-                const whatChangedHtml = m.what_changed
-                    ? `<div class="card-block">
-                        <div class="block-title">🔧 What Changed</div>
-                        <div class="changed-text">${escapeHtml(m.what_changed)}</div>
-                       </div>`
-                    : '';
-
-                const reasoningHtml = m.reasoning
-                    ? `<div class="reasoning-box">💡 ${escapeHtml(m.reasoning)}</div>`
-                    : '';
+                const projectTag = m.project_name ? `<span class="project-chip">${esc(m.project_name)}</span>` : '';
+                const filesSection = m.related_files && m.related_files.length > 0
+                    ? `<div class="files-row">${m.related_files.map(f => `<span class="file-chip">${esc(f)}</span>`).join('')}</div>` : '';
+                const tagsSection = m.tags && m.tags.length > 0
+                    ? `<div class="tags-row">${m.tags.map(t => `<span class="tag-chip">#${esc(t)}</span>`).join('')}</div>` : '';
+                const diffSection = m.what_changed
+                    ? `<div class="code-block">${esc(m.what_changed)}</div>` : '';
+                const reasoningSection = m.reasoning
+                    ? `<div class="reasoning-block">${esc(m.reasoning)}</div>` : '';
 
                 return `
-                    <div class="memory-card type-${m.type.toLowerCase()}">
+                    <div class="memory-card">
                         <div class="card-header">
-                            <span class="badge-type badge-${m.type.toLowerCase()}">${escapeHtml(m.type)}</span>
-                            <span class="card-time">🕒 ${formattedDate}</span>
+                            <span class="badge badge-${m.type.toLowerCase()}">${esc(m.type)}</span>
+                            <div class="card-meta">
+                                ${projectTag}
+                                <span>${dateStr}</span>
+                            </div>
                         </div>
-                        <div class="card-summary">${escapeHtml(m.summary)}</div>
-                        ${whatChangedHtml}
-                        ${filesHtml}
-                        ${tagsHtml}
-                        ${reasoningHtml}
-                    </div>
-                `;
+                        <div class="card-summary">${esc(m.summary)}</div>
+                        ${diffSection}
+                        ${filesSection}
+                        ${tagsSection}
+                        ${reasoningSection}
+                    </div>`;
             }).join('');
+        }
+
+        function esc(str) {
+            if (!str) return '';
+            return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
         }
 
         function openLogModal() {
             document.getElementById('log-modal').classList.add('active');
-            document.getElementById('log-text').focus();
+            document.getElementById('modal-input').focus();
         }
 
         function closeLogModal() {
             document.getElementById('log-modal').classList.remove('active');
-            document.getElementById('log-text').value = '';
+            document.getElementById('modal-input').value = '';
         }
 
         async function submitLogMemory() {
-            const textInput = document.getElementById('log-text');
-            const message = textInput.value.trim();
-            if (!message) return;
-
-            const btn = document.getElementById('save-log-btn');
-            const btnText = document.getElementById('save-btn-text');
-
+            const input = document.getElementById('modal-input').value.trim();
+            if (!input) return;
+            const btn = document.getElementById('modal-submit-btn');
             btn.disabled = true;
-            btnText.innerHTML = `<span class="spinner"></span> Processing with AI...`;
-
+            btn.textContent = 'Saving...';
             try {
                 const res = await fetch('/api/log', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: message })
+                    body: JSON.stringify({ message: input })
                 });
-
-                if (res.ok) {
-                    closeLogModal();
-                    await fetchStats();
-                    await fetchMemories();
-                } else {
-                    alert('Failed to log memory. Please check API keys.');
-                }
-            } catch (err) {
-                console.error('Error logging memory:', err);
-                alert('Error submitting memory.');
-            } finally {
-                btn.disabled = false;
-                btnText.textContent = 'Log Memory';
-            }
-        }
-
-        function escapeHtml(str) {
-            if (!str) return '';
-            return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
+                if (res.ok) { closeLogModal(); fetchStats(); fetchMemories(); }
+                else alert('Failed to save memory.');
+            } catch (err) { console.error(err); }
+            finally { btn.disabled = false; btn.textContent = 'Save Memory'; }
         }
     </script>
 </body>

@@ -37,11 +37,26 @@ def get_dashboard():
         raise HTTPException(status_code=440, detail="Dashboard template not found.")
     return html_file.read_text(encoding="utf-8")
 
+@app.get("/logo.png")
+def get_logo():
+    """Serves the loomgit brand logo image."""
+    from fastapi.responses import FileResponse
+    logo_path = Path(__file__).parent / "logo.png"
+    if logo_path.exists():
+        return FileResponse(logo_path, media_type="image/png")
+    raise HTTPException(status_code=404, detail="Logo image not found.")
+
+@app.get("/api/projects")
+def list_projects():
+    """Returns a list of unique project folders stored in memory."""
+    memory = get_memory_instance()
+    return memory.store.get_unique_projects()
+
 @app.get("/api/memories")
-def list_memories(limit: int = 50, type: Optional[str] = None):
+def list_memories(limit: int = 50, type: Optional[str] = None, project_path: Optional[str] = None):
     """Returns chronological memory records."""
     memory = get_memory_instance()
-    records = memory.list_all(limit=limit, order="DESC")
+    records = memory.list_all(limit=limit, order="DESC", project_path=project_path)
     
     output = []
     for r in records:
@@ -57,17 +72,19 @@ def list_memories(limit: int = 50, type: Optional[str] = None):
             "related_files": r.related_files,
             "timestamp": r.timestamp.isoformat(),
             "source_ref": r.source_ref,
+            "project_name": r.project_name,
+            "project_path": r.project_path,
         })
     return output
 
 @app.get("/api/search")
-def search_memories(q: str, limit: int = 15):
+def search_memories(q: str, limit: int = 15, project_path: Optional[str] = None):
     """Performs semantic vector search across developer memories."""
     if not q or not q.strip():
-        return list_memories(limit=limit)
+        return list_memories(limit=limit, project_path=project_path)
         
     memory = get_memory_instance()
-    results = memory.search(query=q.strip(), limit=limit)
+    results = memory.search(query=q.strip(), limit=limit, project_path=project_path)
     
     output = []
     for r in results:
@@ -81,14 +98,16 @@ def search_memories(q: str, limit: int = 15):
             "related_files": r.related_files,
             "timestamp": r.timestamp.isoformat(),
             "source_ref": r.source_ref,
+            "project_name": r.project_name,
+            "project_path": r.project_path,
         })
     return output
 
 @app.get("/api/stats")
-def get_stats():
+def get_stats(project_path: Optional[str] = None):
     """Calculates dashboard analytics and metrics."""
     memory = get_memory_instance()
-    records = memory.list_all(limit=500)
+    records = memory.list_all(limit=500, project_path=project_path)
     
     total_memories = len(records)
     type_counts = {}
