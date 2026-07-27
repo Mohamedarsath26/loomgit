@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>loomgit Dashboard - Developer Context Engine</title>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #111827;
+            --bg-card: rgba(17, 24, 39, 0.7);
+            --bg-hover: #1f293d;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(99, 102, 241, 0.3);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --accent-primary: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --accent-cyan: #06b6d4;
+            --accent-magenta: #d946ef;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-red: #ef4444;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            line-height: 1.5;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .brand-icon {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5));
+        }
+
+        .brand-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            background: linear-gradient(to right, #ffffff, #9ca3af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-badge {
+            background: rgba(99, 102, 241, 0.15);
+            color: #818cf8;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-family: var(--font-mono);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), #4f46e5);
+            color: #ffffff;
+            border: none;
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--border-glow);
+            transform: translateY(-2px);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.03em;
+        }
+
+        /* Controls Section */
+        .controls-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 0.85rem 1rem 0.85rem 2.8rem;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-family: var(--font-sans);
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        /* Filter Pills */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.4rem 0.85rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .filter-pill:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .filter-pill.active {
+            background: var(--accent-primary);
+            color: #ffffff;
+            border-color: var(--accent-primary);
+            box-shadow: 0 2px 10px var(--accent-glow);
+        }
+
+        /* Memory Stream Timeline */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .memory-count-badge {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .memory-stream {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        /* Memory Card */
+        .memory-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            transition: all 0.25 ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+        }
+
+        .memory-card:hover {
+            border-color: var(--border-glow);
+            transform: translateY(-2px);
+        }
+
+        .memory-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-primary);
+        }
+
+        .memory-card.type-bug_fix::before { background: var(--accent-red); }
+        .memory-card.type-decision::before { background: var(--accent-cyan); }
+        .memory-card.type-architecture::before { background: var(--accent-magenta); }
+        .memory-card.type-tool_usage::before { background: var(--accent-green); }
+        .memory-card.type-lesson_learned::before { background: var(--accent-amber); }
+        .memory-card.type-note::before { background: var(--accent-primary); }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .badge-type {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.65rem;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+        }
+
+        .badge-bug_fix { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+        .badge-decision { background: rgba(6, 182, 212, 0.2); color: #67e8f9; border: 1px solid rgba(6, 182, 212, 0.4); }
+        .badge-architecture { background: rgba(217, 70, 239, 0.2); color: #f5d0fe; border: 1px solid rgba(217, 70, 239, 0.4); }
+        .badge-tool_usage { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); }
+        .badge-lesson_learned { background: rgba(245, 158, 11, 0.2); color: #fde68a; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .badge-note { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.4); }
+
+        .card-time {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .card-summary {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .card-block {
+            margin-top: 0.85rem;
+        }
+
+        .block-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .changed-text {
+            font-size: 0.9rem;
+            color: #d1d5db;
+            white-space: pre-wrap;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 0.75rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-family: var(--font-sans);
+        }
+
+        .files-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.4rem;
+        }
+
+        .file-tag {
+            background: rgba(6, 182, 212, 0.15);
+            color: #67e8f9;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-family: var(--font-mono);
+        }
+
+        .tags-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.4rem;
+        }
+
+        .tag-pill {
+            background: rgba(255, 255, 255, 0.06);
+            color: #9ca3af;
+            padding: 0.15rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .reasoning-box {
+            background: rgba(99, 102, 241, 0.08);
+            border-left: 3px solid var(--accent-primary);
+            padding: 0.75rem 1rem;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            font-size: 0.88rem;
+            color: #c7d2fe;
+            font-style: italic;
+            margin-top: 0.85rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--bg-card);
+            border: 1px dashed var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.6;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 540px;
+            padding: 1.75rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            transform: scale(0.95);
+            transition: transform 0.25s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.4rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-textarea {
+            width: 100%;
+            min-height: 120px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 0.85rem;
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            resize: vertical;
+            margin-bottom: 1.25rem;
+        }
+
+        .modal-textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="brand">
+                <span class="brand-icon">🧠</span>
+                <span class="brand-title">loomgit</span>
+                <span class="brand-badge">v0.1.0</span>
+            </div>
+            <div class="header-actions">
+                <button class="btn-primary" onclick="openLogModal()">
+                    <span>+</span> Log Memory
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">📚 Total Memories</div>
+                <div class="stat-value" id="stat-total">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">⚡ Top Memory Category</div>
+                <div class="stat-value" id="stat-top-category">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">📁 Tracked Files</div>
+                <div class="stat-value" id="stat-files">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">🏷️ Keyword Tags</div>
+                <div class="stat-value" id="stat-tags">--</div>
+            </div>
+        </div>
+
+        <!-- Controls (Search & Filter) -->
+        <div class="controls-card">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-input" class="search-input" placeholder="Search developer memories semantically (e.g. 'groq validation', 'git hook', 'database schema')...">
+            </div>
+
+            <div class="filter-bar" id="filter-bar">
+                <button class="filter-pill active" data-type="ALL">All Memories</button>
+                <button class="filter-pill" data-type="bug_fix">🐛 Bug Fixes</button>
+                <button class="filter-pill" data-type="decision">🎯 Decisions</button>
+                <button class="filter-pill" data-type="architecture">🏗️ Architecture</button>
+                <button class="filter-pill" data-type="tool_usage">🛠️ Tool Usage</button>
+                <button class="filter-pill" data-type="lesson_learned">💡 Lessons Learned</button>
+                <button class="filter-pill" data-type="note">📝 Notes</button>
+            </div>
+        </div>
+
+        <!-- Memory Stream -->
+        <div class="section-header">
+            <h2 class="section-title">
+                <span>🧠 Developer Memory Stream</span>
+                <span class="memory-count-badge" id="memory-count">Showing 0 items</span>
+            </h2>
+        </div>
+
+        <div class="memory-stream" id="memory-stream">
+            <!-- Dynamic cards will be rendered here -->
+        </div>
+    </div>
+
+    <!-- Modal for Manual Log -->
+    <div class="modal-overlay" id="log-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Log a New Memory</h3>
+                <button class="close-btn" onclick="closeLogModal()">&times;</button>
+            </div>
+            <textarea id="log-text" class="modal-textarea" placeholder="What did you learn, fix, or decide recently? (e.g., 'We upgraded Groq model to llama-3.3-70b to support JSON mode fallback')"></textarea>
+            <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                <button class="filter-pill" onclick="closeLogModal()">Cancel</button>
+                <button class="btn-primary" id="save-log-btn" onclick="submitLogMemory()">
+                    <span id="save-btn-text">Log Memory</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allMemories = [];
+        let activeFilter = 'ALL';
+        let searchDebounceTimer = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchStats();
+            fetchMemories();
+
+            // Search input listener
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                clearTimeout(searchDebounceTimer);
+                const query = e.target.value.trim();
+                searchDebounceTimer = setTimeout(() => {
+                    if (query.length > 0) {
+                        performSearch(query);
+                    } else {
+                        fetchMemories();
+                    }
+                }, 300);
+            });
+
+            // Filter pills listener
+            document.getElementById('filter-bar').addEventListener('click', (e) => {
+                const pill = e.target.closest('.filter-pill');
+                if (!pill) return;
+
+                document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+
+                activeFilter = pill.getAttribute('data-type');
+                renderMemories();
+            });
+        });
+
+        async function fetchStats() {
+            try {
+                const res = await fetch('/api/stats');
+                const data = await res.json();
+                document.getElementById('stat-total').textContent = data.total_memories || 0;
+                document.getElementById('stat-files').textContent = data.top_files_count || 0;
+                document.getElementById('stat-tags').textContent = data.top_tags_count || 0;
+
+                const topCategory = data.top_category ? data.top_category.toUpperCase() : 'NONE';
+                document.getElementById('stat-top-category').textContent = topCategory;
+            } catch (err) {
+                console.error('Failed to fetch stats:', err);
+            }
+        }
+
+        async function fetchMemories() {
+            try {
+                const res = await fetch('/api/memories?limit=50');
+                allMemories = await res.json();
+                renderMemories();
+            } catch (err) {
+                console.error('Failed to fetch memories:', err);
+            }
+        }
+
+        async function performSearch(query) {
+            try {
+                const res = await fetch(`/api/search?q=${encodeURIComponent(query)}&limit=15`);
+                allMemories = await res.json();
+                renderMemories();
+            } catch (err) {
+                console.error('Search failed:', err);
+            }
+        }
+
+        function renderMemories() {
+            const container = document.getElementById('memory-stream');
+            let filtered = allMemories;
+
+            if (activeFilter !== 'ALL') {
+                filtered = allMemories.filter(m => m.type.toLowerCase() === activeFilter.toLowerCase());
+            }
+
+            document.getElementById('memory-count').textContent = `Showing ${filtered.length} item(s)`;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <h3>No matching developer memories found</h3>
+                        <p style="margin-top: 0.5rem;">Try adjusting your search query or filter criteria.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(m => {
+                const formattedDate = new Date(m.timestamp).toLocaleString('en-US', {
+                    month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                });
+
+                const filesHtml = m.related_files && m.related_files.length > 0
+                    ? `<div class="card-block">
+                        <div class="block-title">📁 Files</div>
+                        <div class="files-list">${m.related_files.map(f => `<span class="file-tag">${escapeHtml(f)}</span>`).join('')}</div>
+                       </div>`
+                    : '';
+
+                const tagsHtml = m.tags && m.tags.length > 0
+                    ? `<div class="tags-list">${m.tags.map(t => `<span class="tag-pill">#${escapeHtml(t)}</span>`).join('')}</div>`
+                    : '';
+
+                const whatChangedHtml = m.what_changed
+                    ? `<div class="card-block">
+                        <div class="block-title">🔧 What Changed</div>
+                        <div class="changed-text">${escapeHtml(m.what_changed)}</div>
+                       </div>`
+                    : '';
+
+                const reasoningHtml = m.reasoning
+                    ? `<div class="reasoning-box">💡 ${escapeHtml(m.reasoning)}</div>`
+                    : '';
+
+                return `
+                    <div class="memory-card type-${m.type.toLowerCase()}">
+                        <div class="card-header">
+                            <span class="badge-type badge-${m.type.toLowerCase()}">${escapeHtml(m.type)}</span>
+                            <span class="card-time">🕒 ${formattedDate}</span>
+                        </div>
+                        <div class="card-summary">${escapeHtml(m.summary)}</div>
+                        ${whatChangedHtml}
+                        ${filesHtml}
+                        ${tagsHtml}
+                        ${reasoningHtml}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openLogModal() {
+            document.getElementById('log-modal').classList.add('active');
+            document.getElementById('log-text').focus();
+        }
+
+        function closeLogModal() {
+            document.getElementById('log-modal').classList.remove('active');
+            document.getElementById('log-text').value = '';
+        }
+
+        async function submitLogMemory() {
+            const textInput = document.getElementById('log-text');
+            const message = textInput.value.trim();
+            if (!message) return;
+
+            const btn = document.getElementById('save-log-btn');
+            const btnText = document.getElementById('save-btn-text');
+
+            btn.disabled = true;
+            btnText.innerHTML = `<span class="spinner"></span> Processing with AI...`;
+
+            try {
+                const res = await fetch('/api/log', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message })
+                });
+
+                if (res.ok) {
+                    closeLogModal();
+                    await fetchStats();
+                    await fetchMemories();
+                } else {
+                    alert('Failed to log memory. Please check API keys.');
+                }
+            } catch (err) {
+                console.error('Error logging memory:', err);
+                alert('Error submitting memory.');
+            } finally {
+                btn.disabled = false;
+                btnText.textContent = 'Log Memory';
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+    </script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from devmemory.models import RawEvent
+from loomgit.models import RawEvent
 
 def create_manual_event(text: str) -> RawEvent:
     """Takes a simple text note and turns it into a RawEvent ready for the database."""

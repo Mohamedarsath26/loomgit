@@ -1,7 +1,7 @@
 from pathlib import Path
-from devmemory import Memory
+from loomgit import Memory
 
-from devmemory.models import MemoryType
+from loomgit.models import MemoryType
 
 def test_manual_capture_end_to_end(tmp_path: Path):
     db_path = tmp_path / "test_store.db"

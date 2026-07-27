@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 from datetime import datetime
 
-from devmemory.models import RawEvent, MemoryRecord, MemoryType
+from loomgit.models import RawEvent, MemoryRecord, MemoryType
 
 
 class SQLiteStore:

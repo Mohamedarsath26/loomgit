@@ -1,15 +1,15 @@
 from pathlib import Path
 
-from devmemory.store.sqlite_store import SQLiteStore
-from devmemory.qdrant_store import QdrantVectorStore
-from devmemory.capture.manual import create_manual_event
-from devmemory.capture.git import create_git_event
-from devmemory.extract.pipeline import ExtractionPipeline
-from devmemory.llm.groq_client import GroqLLMClient
-from devmemory.llm.google_embedding import GoogleEmbeddingClient
+from loomgit.store.sqlite_store import SQLiteStore
+from loomgit.qdrant_store import QdrantVectorStore
+from loomgit.capture.manual import create_manual_event
+from loomgit.capture.git import create_git_event
+from loomgit.extract.pipeline import ExtractionPipeline
+from loomgit.llm.groq_client import GroqLLMClient
+from loomgit.llm.google_embedding import GoogleEmbeddingClient
 
 class Memory:
-    """The main entrypoint for the devmemory library."""
+    """The main entrypoint for the loomgit library."""
     
     def __init__(self, db_path: str | Path):
         db_path = Path(db_path)

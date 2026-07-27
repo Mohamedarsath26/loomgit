@@ -1,7 +1,7 @@
 [project]
-name = "devmemory"
+name = "loomgit"
 version = "0.1.0"
-description = "A tool that remembers developers knowledge"
+description = "AI-powered context engine that weaves developer memory and codebase history"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -11,8 +11,10 @@ dependencies = [
     "python-dotenv>=1.0.0",
     "rich>=13.0.0",
     "google-genai>=1.0.0",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.20.0",
 ]
 [project.optional-dependencies]
 dev = ["pytest>=8.0.0"]
 [project.scripts]
-devmemory = "devmemory.cli:main"
+loomgit = "loomgit.cli:main"

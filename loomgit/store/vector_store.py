@@ -1,5 +1,5 @@
 from typing import Protocol
-from devmemory.models import MemoryRecord
+from loomgit.models import MemoryRecord
 
 class VectorStore(Protocol):
     """An interface for storing and searching mathematical embeddings."""

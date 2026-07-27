@@ -1,6 +1,6 @@
 from pathlib import Path
-from devmemory import Memory
-from devmemory.models import MemoryType
+from loomgit import Memory
+from loomgit.models import MemoryType
 
 def test_search_end_to_end(tmp_path: Path):
     db_path = tmp_path / "test_store.db"

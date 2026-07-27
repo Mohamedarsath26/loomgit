@@ -1,6 +1,6 @@
 import json
 from groq import Groq
-from devmemory.config import get_key
+from loomgit.config import get_key
 
 class GroqLLMClient:
     """A real LLM client that talks to Groq's API."""
@@ -8,7 +8,7 @@ class GroqLLMClient:
     def __init__(self):
         api_key = get_key("groq_api_key")
         if not api_key:
-            raise ValueError("GROQ_API_KEY not found! Run 'devmemory setup' first.")
+            raise ValueError("GROQ_API_KEY not found! Run 'loomgit setup' first.")
         
         self.client = Groq(api_key=api_key)
 

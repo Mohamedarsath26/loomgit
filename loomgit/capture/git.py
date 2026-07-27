@@ -2,7 +2,7 @@ import subprocess
 import uuid
 from datetime import datetime
 from pathlib import Path
-from devmemory.models import RawEvent
+from loomgit.models import RawEvent
 
 
 def _run_git_command(args: list[str], cwd: Path | str | None = None) -> str:

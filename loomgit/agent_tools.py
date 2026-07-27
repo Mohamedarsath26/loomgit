@@ -1,9 +1,9 @@
 from pathlib import Path
-from devmemory import Memory
+from loomgit import Memory
 
 def _get_memory() -> Memory:
     """Creates and returns a Memory instance with the default database path."""
-    db_path = Path.home() / ".devmemory" / "store.db"
+    db_path = Path.home() / ".loomgit" / "store.db"
     return Memory(db_path=db_path)
 
 

@@ -1,13 +1,12 @@
 import argparse
 from pathlib import Path
-from devmemory import Memory
+from loomgit import Memory
 import shutil
 import sys
 import io
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
-import shutil
 import json
 
 # Force UTF-8 output to avoid Windows cp1252 encoding errors with unicode symbols
@@ -20,7 +19,7 @@ from rich.box import ROUNDED
 from rich.rule import Rule
 from rich.theme import Theme
 
-from devmemory.config import load_config, save_config, CONFIG_FILE
+from loomgit.config import load_config, save_config, CONFIG_FILE
 
 
 # Claude Code inspired color palette and theme
@@ -37,7 +36,7 @@ TYPE_STYLES = {
 }
 
 def main():
-    parser = argparse.ArgumentParser(description="devmemory CLI - Developer AI Memory Assistant")
+    parser = argparse.ArgumentParser(description="loomgit CLI - Developer AI Context Engine")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     log_parser = subparsers.add_parser("log", help="Log a manual memory")
@@ -51,27 +50,48 @@ def main():
     list_parser.add_argument("--asc", action="store_true", help="Show oldest first (default: newest first)")
 
     subparsers.add_parser("install-hook", help="Install post-commit Git hook")
-    subparsers.add_parser("log-git", help="Capture the latest Git commit into devmemory")
+    subparsers.add_parser("log-git", help="Capture the latest Git commit into loomgit")
 
-    subparsers.add_parser("setup", help="Configure API keys for devmemory")
+    subparsers.add_parser("setup", help="Configure API keys for loomgit")
 
-    subparsers.add_parser("setup-antigravity", help="Connect devmemory MCP to Antigravity IDE")
+    subparsers.add_parser("setup-antigravity", help="Connect loomgit MCP to Antigravity IDE")
    
-    subparsers.add_parser("setup-claude", help="Connect devmemory MCP to Claude Code")
+    subparsers.add_parser("setup-claude", help="Connect loomgit MCP to Claude Code")
 
+    ui_parser = subparsers.add_parser("ui", help="Launch local web dashboard in browser")
+    ui_parser.add_argument("--port", type=int, default=8000, help="Port to run the dashboard server (default: 8000)")
+    ui_parser.add_argument("--host", type=str, default="127.0.0.1", help="Host address (default: 127.0.0.1)")
+
+    dashboard_parser = subparsers.add_parser("dashboard", help="Launch local web dashboard in browser")
+    dashboard_parser.add_argument("--port", type=int, default=8000, help="Port to run the dashboard server (default: 8000)")
+    dashboard_parser.add_argument("--host", type=str, default="127.0.0.1", help="Host address (default: 127.0.0.1)")
 
     args = parser.parse_args()
 
-    db_path = Path.home() / ".devmemory" / "store.db"
+    db_dir = Path.home() / ".loomgit"
+    db_dir.mkdir(parents=True, exist_ok=True)
+    db_path = db_dir / "store.db"
+
+    legacy_db_path = Path.home() / ".devloom" / "store.db"
+    if legacy_db_path.exists():
+        try:
+            if not db_path.exists() or db_path.stat().st_size < 30000:
+                shutil.copy2(legacy_db_path, db_path)
+            legacy_qdrant = Path.home() / ".devloom" / "qdrant_db"
+            qdrant_dir = db_dir / "qdrant_db"
+            if legacy_qdrant.exists() and not qdrant_dir.exists():
+                shutil.copytree(legacy_qdrant, qdrant_dir)
+        except Exception:
+            pass
     
     if args.command == "log":
         with console.status("[bold cyan]Processing memory with AI...[/bold cyan]", spinner="dots"):
             memory = Memory(db_path=db_path)
             memory.capture(source="manual", raw_text=args.message)
-        console.print("\n[bold green]✓[/bold green] [bold]Successfully logged memory to devmemory![/bold]\n")
+        console.print("\n[bold green]✓[/bold green] [bold]Successfully logged memory to loomgit![/bold]\n")
         
     elif args.command == "search":
-        console.print(Rule("[bold magenta]🧠 devmemory[/bold magenta]", style="dim"))
+        console.print(Rule("[bold magenta]🧠 loomgit[/bold magenta]", style="dim"))
         
         with console.status(f"[bold cyan]Searching memories for:[/bold cyan] [italic]'{args.query}'[/italic]...", spinner="dots"):
             memory = Memory(db_path=db_path)
@@ -121,7 +141,7 @@ def main():
             console.print()
 
     elif args.command == "list":
-        console.print(Rule("[bold magenta]🧠 devmemory timeline[/bold magenta]", style="dim"))
+        console.print(Rule("[bold magenta]🧠 loomgit timeline[/bold magenta]", style="dim"))
         order = "ASC" if args.asc else "DESC"
         with console.status("[bold cyan]Fetching memory timeline...[/bold cyan]", spinner="dots"):
             memory = Memory(db_path=db_path)
@@ -180,11 +200,11 @@ def main():
         hooks_dir.mkdir(parents=True, exist_ok=True)
         hook_path = hooks_dir / "post-commit"
 
-        devmemory_path = shutil.which("devmemory")
-        if devmemory_path:
-            bash_path = devmemory_path.replace("\\", "/").replace("C:/", "/c/")
+        loomgit_path = shutil.which("loomgit")
+        if loomgit_path:
+            bash_path = loomgit_path.replace("\\", "/").replace("C:/", "/c/")
         else:
-            bash_path = "devmemory"
+            bash_path = "loomgit"
 
         hook_script = f"#!/bin/sh\n\"{bash_path}\" log-git > /dev/null 2>&1 &\n"
         hook_path.write_text(hook_script, encoding="utf-8")
@@ -203,10 +223,10 @@ def main():
         if captured:
             console.print("\n[bold green]✓[/bold green] [bold]Captured Git commit memory![/bold]\n")
         else:
-            console.print("\n[bold yellow]ℹ[/bold yellow] [bold]Commit was already captured in devmemory. Skipped duplicate.[/bold]\n")
+            console.print("\n[bold yellow]ℹ[/bold yellow] [bold]Commit was already captured in loomgit. Skipped duplicate.[/bold]\n")
 
     elif args.command == "setup":
-        console.print("\n[bold cyan]🧠 Welcome to devmemory setup![/bold cyan]\n")
+        console.print("\n[bold cyan]🧠 Welcome to loomgit setup![/bold cyan]\n")
 
         config = load_config()
 
@@ -219,14 +239,14 @@ def main():
         save_config(config)
 
         console.print(f"\n[bold green]✓[/bold green] API keys saved to [cyan]{CONFIG_FILE}[/cyan]")
-        console.print("[bold green]✓[/bold green] You're all set! Try: [cyan]devmemory log \"my first memory\"[/cyan]\n")
+        console.print("[bold green]✓[/bold green] You're all set! Try: [cyan]loomgit log \"my first memory\"[/cyan]\n")
 
     elif args.command == "setup-antigravity":
-        console.print("\n[bold cyan]>> Connecting devmemory to Antigravity...[/bold cyan]\n")
+        console.print("\n[bold cyan]>> Connecting loomgit to Antigravity...[/bold cyan]\n")
 
         config = load_config()
         if not config.get("groq_api_key") or not config.get("google_api_key"):
-            console.print("[bold red]✗[/bold red] API keys not found! Run [cyan]devmemory setup[/cyan] first.\n")
+            console.print("[bold red]✗[/bold red] API keys not found! Run [cyan]loomgit setup[/cyan] first.\n")
             return
         mcp_config_path = Path.home() / ".gemini" / "antigravity-ide" / "mcp_config.json"
         if not mcp_config_path.exists():
@@ -241,9 +261,9 @@ def main():
 
         python_path = shutil.which("python") or "python"
 
-        mcp_data["mcpServers"]["devmemory"] = {
+        mcp_data["mcpServers"]["loomgit"] = {
             "command": python_path,
-            "args": ["-m", "devmemory.mcp_server"],
+            "args": ["-m", "loomgit.mcp_server"],
             "env": {
                 "GROQ_API_KEY": config["groq_api_key"],
                 "GOOGLE_API_KEY": config["google_api_key"],
@@ -253,15 +273,15 @@ def main():
         with open(mcp_config_path, "w") as f:
             json.dump(mcp_data, f, indent=2)
 
-        console.print(f"[bold green]✓[/bold green] Added devmemory MCP server to [cyan]{mcp_config_path}[/cyan]")
+        console.print(f"[bold green]✓[/bold green] Added loomgit MCP server to [cyan]{mcp_config_path}[/cyan]")
         console.print("[bold green]✓[/bold green] Restart Antigravity to activate! 🚀\n")
 
     elif args.command == "setup-claude":
-        console.print("\n[bold cyan]>> Connecting devmemory to Claude Code...[/bold cyan]\n")
+        console.print("\n[bold cyan]>> Connecting loomgit to Claude Code...[/bold cyan]\n")
 
         config = load_config()
         if not config.get("groq_api_key") or not config.get("google_api_key"):
-            console.print("[bold red]✗[/bold red] API keys not found! Run [cyan]devmemory setup[/cyan] first.\n")
+            console.print("[bold red]✗[/bold red] API keys not found! Run [cyan]loomgit setup[/cyan] first.\n")
             return
 
         claude_config_path = Path.home() / ".claude.json"
@@ -274,9 +294,9 @@ def main():
         python_path = shutil.which("python") or "python"
 
         claude_data.setdefault("mcpServers", {})
-        claude_data["mcpServers"]["devmemory"] = {
+        claude_data["mcpServers"]["loomgit"] = {
             "command": python_path,
-            "args": ["-m", "devmemory.mcp_server"],
+            "args": ["-m", "loomgit.mcp_server"],
             "env": {
                 "GROQ_API_KEY": config["groq_api_key"],
                 "GOOGLE_API_KEY": config["google_api_key"],
@@ -286,8 +306,28 @@ def main():
         with open(claude_config_path, "w") as f:
             json.dump(claude_data, f, indent=2)
 
-        console.print(f"[bold green][OK][/bold green] Added devmemory MCP server to [cyan]{claude_config_path}[/cyan]")
-        console.print("[bold green][OK][/bold green] Restart Claude Code to activate!\n")
+        console.print(f"[bold green]✓[/bold green] Connected [cyan]loomgit[/cyan] MCP server to [bold]Claude Code[/bold] at [cyan]{claude_config_path}[/cyan]\n")
+
+    elif args.command in ["ui", "dashboard"]:
+        import uvicorn
+        import webbrowser
+        import threading
+
+        port = args.port
+        host = args.host
+        url = f"http://{host}:{port}"
+
+        console.print(f"\n[bold cyan]🧠 Starting loomgit Local Web Dashboard...[/bold cyan]")
+        console.print(f"[bold green]✓[/bold green] Server running at [bold underline cyan]{url}[/bold underline cyan]\n")
+
+        def open_browser():
+            try:
+                webbrowser.open(url)
+            except Exception:
+                pass
+
+        threading.Timer(1.0, open_browser).start()
+        uvicorn.run("loomgit.web.app:app", host=host, port=port, log_level="warning")
 
 
 if __name__ == "__main__":

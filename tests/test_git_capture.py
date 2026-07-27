@@ -1,7 +1,7 @@
 import subprocess
 from pathlib import Path
-from devmemory import Memory
-from devmemory.capture.git import get_last_commit_info
+from loomgit import Memory
+from loomgit.capture.git import get_last_commit_info
 
 def test_get_last_commit_info(tmp_path: Path):
     # 1. Initialize a real temporary Git repository

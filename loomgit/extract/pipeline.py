@@ -1,10 +1,10 @@
 import uuid
 from datetime import datetime
 
-from devmemory.store.sqlite_store import SQLiteStore
-from devmemory.store.vector_store import VectorStore
-from devmemory.llm.client import LLMClient
-from devmemory.models import MemoryType, MemoryRecord
+from loomgit.store.sqlite_store import SQLiteStore
+from loomgit.store.vector_store import VectorStore
+from loomgit.llm.client import LLMClient
+from loomgit.models import MemoryType, MemoryRecord
 
 class ExtractionPipeline:
     def __init__(self,store:SQLiteStore,llm: LLMClient,vector_store:VectorStore, embedder=None):

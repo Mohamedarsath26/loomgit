@@ -1,11 +1,15 @@
 import json
 from pathlib import Path
 
-CONFIG_DIR = Path.home() / ".devmemory"
+CONFIG_DIR = Path.home() / ".loomgit"
 CONFIG_FILE = CONFIG_DIR / "config.json"
+LEGACY_CONFIG_FILE = Path.home() / ".devloom" / "config.json"
 
 def load_config() -> dict:
     """Reads the config file and returns it as a dictionary."""
+    if not CONFIG_FILE.exists() and LEGACY_CONFIG_FILE.exists():
+        with open(LEGACY_CONFIG_FILE, "r") as f:
+            return json.load(f)
     if not CONFIG_FILE.exists():
         return {}
     

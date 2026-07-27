@@ -2,8 +2,8 @@ import uuid
 from datetime import datetime
 from pathlib import Path
 
-from devmemory.models import RawEvent, MemoryRecord, MemoryType
-from devmemory.store.sqlite_store import SQLiteStore
+from loomgit.models import RawEvent, MemoryRecord, MemoryType
+from loomgit.store.sqlite_store import SQLiteStore
 
 def test_store_raw_event(tmp_path: Path):
     db_path = tmp_path/"test_store.db"

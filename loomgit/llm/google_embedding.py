@@ -1,5 +1,5 @@
 from google import genai
-from devmemory.config import get_key
+from loomgit.config import get_key
 
 class GoogleEmbeddingClient:
     """A real embedding client using Google's text-embedding-004 model."""
@@ -7,7 +7,7 @@ class GoogleEmbeddingClient:
     def __init__(self):
         api_key = get_key("google_api_key")
         if not api_key:
-            raise ValueError("GOOGLE_API_KEY not found! Run 'devmemory setup' first.")
+            raise ValueError("GOOGLE_API_KEY not found! Run 'loomgit setup' first.")
         
         self.client = genai.Client(api_key=api_key)
         
