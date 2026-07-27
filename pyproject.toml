@@ -1,6 +1,6 @@
 [project]
 name = "loomgit"
-version = "0.1.4"
+version = "0.1.5"
 description = "AI-powered context engine that weaves developer memory and codebase history"
 readme = "README.md"
 license = { text = "MIT" }

@@ -1,10 +1,6 @@
-<p align="center">
-  <a href="https://github.com/Mohamedarsath26/loomgit">
-    <img src="https://raw.githubusercontent.com/Mohamedarsath26/loomgit/main/loomgit/web/logo.png" width="120" alt="loomgit logo">
-  </a>
-</p>
+![loomgit logo](https://raw.githubusercontent.com/Mohamedarsath26/loomgit/main/loomgit/web/logo.png)
 
-<h1 align="center">loomgit</h1>
+# loomgit
 
 <p align="center">
   <strong>The AI-Powered Developer Memory & Context Engine</strong>
