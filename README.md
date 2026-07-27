@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Mohamedarsath26/devloom/main/loomgit/web/logo.png" width="120" height="120" alt="loomgit logo" style="border-radius: 16px;">
+  <img src="https://raw.githubusercontent.com/Mohamedarsath26/loomgit/main/loomgit/web/logo.png" width="120" height="120" alt="loomgit logo" style="border-radius: 16px;">
 </p>
 
 <h1 align="center">loomgit</h1>
@@ -36,8 +36,8 @@ Follow these sequential steps to set up `loomgit`, configure keys, capture memor
 ### 1️⃣ Installation
 
 ```bash
-git clone https://github.com/Mohamedarsath26/devmemory.git
-cd devmemory
+git clone https://github.com/Mohamedarsath26/loomgit.git
+cd loomgit
 pip install -e .
 ```
 
@@ -100,7 +100,7 @@ loomgit ui
 > **View Live Dashboard:** Open **[http://127.0.0.1:8001](http://127.0.0.1:8001)** in your web browser.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Mohamedarsath26/devloom/main/loomgit/web/dashboard_preview.png" width="100%" alt="loomgit Kamino-inspired dark web dashboard preview" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+  <img src="https://raw.githubusercontent.com/Mohamedarsath26/loomgit/main/loomgit/web/dashboard_preview.png" width="100%" alt="loomgit Kamino-inspired dark web dashboard preview" style="border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
 </p>
 
 ---
