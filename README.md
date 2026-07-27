@@ -1,6 +1,7 @@
-![loomgit logo](https://raw.githubusercontent.com/Mohamedarsath26/loomgit/main/loomgit/web/logo.png)
-
-# loomgit
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Mohamedarsath26/loomgit/main/loomgit/web/logo.png" width="120" height="120" alt="loomgit logo">
+  <h1>loomgit</h1>
+</div>
 
 <p align="center">
   <strong>The AI-Powered Developer Memory & Context Engine</strong>
