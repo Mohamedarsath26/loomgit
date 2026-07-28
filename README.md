@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <a href="#-architecture--how-it-works"><img src="https://img.shields.io/badge/Architecture-Hybrid%20Vector%20%2B%20SQL-blueviolet?style=flat-square" alt="Architecture"></a>
+  <a href="#-architecture--how-it-works"><img src="https://img.shields.io/badge/Architecture-Semantic%20Vector%20Search-blueviolet?style=flat-square" alt="Architecture"></a>
   <a href="#-benchmark--feature-comparison"><img src="https://img.shields.io/badge/LLM-Groq%20Llama%203.3%2070B-emerald?style=flat-square" alt="LLM Engine"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="License"></a>
   <a href="#4%EF%B8%8F%E2%83%93-connect-ai-coding-assistants-mcp-setup"><img src="https://img.shields.io/badge/Protocol-MCP%20Server-orange?style=flat-square" alt="MCP Protocol"></a>
@@ -34,6 +34,11 @@ Follow these sequential steps to set up `loomgit`, configure keys, capture memor
 
 ### 1️⃣ Installation
 
+```bash
+pip install loomgit
+```
+
+*Or install from source for development:*
 ```bash
 git clone https://github.com/Mohamedarsath26/loomgit.git
 cd loomgit
@@ -125,7 +130,7 @@ loomgit ui
 | **Primary Focus** | **Developer Memory & Intent** | Commit message generator | Generic LLM memory | PostgreSQL agent memory | Codebase AST graph |
 | **Automatic Git Hook Capture** | ⚡ **Yes (`loomgit install-hook`)** | ⚠️ Manual `git commit` run | ❌ No | ❌ No | ❌ No |
 | **AI Intent & Reasoning Analysis** | 🧠 **Llama 3.3 70B** | ❌ Short message only | ⚠️ Generic facts | ⚠️ Unstructured | ❌ Code structure only |
-| **Hybrid Search Engine** | 🔍 **Gemini + Qdrant + SQL** | ❌ No search | ⚠️ Vector only | ⚠️ `pgvector` only | ⚠️ Graph traversal |
+| **Semantic Vector Search Engine** | 🔍 **Gemini + Qdrant Vector DB** | ❌ No search | ⚠️ Vector only | ⚠️ `pgvector` only | ⚠️ Graph traversal |
 | **Smart Per-File Diff Budgeting** | 🎯 **Yes (800-char/file)** | ❌ Truncate blob | ❌ No diff parsing | ❌ No diff parsing | ❌ No diff parsing |
 | **1-Click MCP Setup (Antigravity/Claude)** | 🔌 **Yes (`setup-antigravity`)** | ❌ No | ⚠️ Partial API | 🔌 Yes | ⚠️ Partial |
 | **Standalone Local Web Dashboard** | 📊 **Yes (`loomgit ui`)** | ❌ No | ❌ SaaS / Cloud | ❌ No | ⚠️ Static HTML report |
@@ -153,7 +158,7 @@ loomgit ui
           ┌──────────────────────────┐        ┌──────────────────────────┐
           │  SQLite Store            │        │  Qdrant Vector DB        │
           │  • Chronological Event   │        │  • Google Gemini 768d    │
-          │  • SQL LIKE Fallback     │        │    Dense Embeddings      │
+          │  • Metadata & History    │        │    Dense Embeddings      │
           └─────────────┬────────────┘        └─────────────┬────────────┘
                         │                                   │
                         └─────────────────┬─────────────────┘

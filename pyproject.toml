@@ -3,7 +3,7 @@ name = "loomgit"
 version = "0.1.6"
 description = "AI-powered context engine that weaves developer memory and codebase history"
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 requires-python = ">=3.11"
 dependencies = [
     "pydantic>=2.0.0",
@@ -16,6 +16,14 @@ dependencies = [
     "uvicorn>=0.20.0",
 ]
 [project.optional-dependencies]
-dev = ["pytest>=8.0.0"]
+dev = ["pytest>=8.0.0", "build", "twine"]
 [project.scripts]
 loomgit = "loomgit.cli:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-data]
+"loomgit.web" = ["*.html", "*.png"]
+
