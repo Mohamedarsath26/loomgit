@@ -1,22 +1,35 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/Mohamedarsath26/loomgit/main/loomgit/web/logo.png" width="120" height="120" alt="loomgit logo">
   <h1>loomgit</h1>
+  <p><strong>The AI-Powered Developer Memory & Context Engine</strong></p>
 </div>
 
 <p align="center">
-  <strong>The AI-Powered Developer Memory & Context Engine</strong>
-</p>
-
-<p align="center">
-  <a href="#-architecture--how-it-works"><img src="https://img.shields.io/badge/Architecture-Semantic%20Vector%20Search-blueviolet?style=flat-square" alt="Architecture"></a>
-  <a href="#-benchmark--feature-comparison"><img src="https://img.shields.io/badge/LLM-Groq%20Llama%203.3%2070B-emerald?style=flat-square" alt="LLM Engine"></a>
+  <a href="https://pypi.org/project/loomgit/"><img src="https://img.shields.io/pypi/v/loomgit?style=flat-square&color=blue" alt="PyPI Version"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="License"></a>
+  <a href="#-architecture--how-it-works"><img src="https://img.shields.io/badge/Architecture-Local--First%20Dual--Database-blueviolet?style=flat-square" alt="Architecture"></a>
   <a href="#4%EF%B8%8F%E2%83%93-connect-ai-coding-assistants-mcp-setup"><img src="https://img.shields.io/badge/Protocol-MCP%20Server-orange?style=flat-square" alt="MCP Protocol"></a>
 </p>
 
+> 💡 **AI coding assistants suffer from repository amnesia.** They see your code as it is *right now*, but they don't know *why* architectural decisions were made weeks ago or *why* a specific workaround was implemented.  
+> **`loomgit`** automatically captures, structures, and semantically indexes your coding decisions, bug fixes, architecture choices, and lessons learned into an AI-queryable long-term memory graph.
+
 <p align="center">
-  <code>loomgit</code> automatically captures, structures, and semantically indexes your coding decisions, bug fixes, architecture choices, and lessons learned into an AI-queryable memory graph.
+  <img src="https://raw.githubusercontent.com/Mohamedarsath26/loomgit/main/loomgit/web/dashboard_preview.png" alt="loomgit Kamino-inspired dark web dashboard preview" width="100%">
 </p>
+
+---
+
+## ✨ Key Features
+
+- ⚡ **Automatic Git Commit Hook:** Intercepts `git commit` events seamlessly across CLI, VS Code, Cursor, or JetBrains IDEs.
+- 🧠 **AI Intent & Reasoning Analysis:** Uses Groq (Llama 3.3 70B) to parse per-file code diffs and extract developer intent.
+- 🔍 **Semantic Vector Search Engine:** Built with Google Gemini 768d dense embeddings and local Qdrant Vector DB.
+- 🔌 **1-Click MCP Integration:** Connects context recall directly into Claude Code, Claude Desktop, and DeepMind Antigravity IDE via Model Context Protocol.
+- 📊 **Standalone Local Web Dashboard:** Explore memory timelines, search past decisions, and filter by project scope (`loomgit ui`).
+- 💻 **100% Local & Private:** Dual SQLite + local Qdrant engine keeps your code and memory zero-cloud dependent.
+
+---
 
 ## 📋 Prerequisites
 
@@ -103,22 +116,6 @@ loomgit ui
 
 > **View Live Dashboard:** Open **[http://127.0.0.1:8001](http://127.0.0.1:8001)** in your web browser.
 
-![loomgit Kamino-inspired dark web dashboard preview](https://raw.githubusercontent.com/Mohamedarsath26/loomgit/main/loomgit/web/dashboard_preview.png)
-
----
-
-## 💻 CLI Command Reference
-
-| Command | Description | Example |
-| :--- | :--- | :--- |
-| `loomgit log` | Log a manual memory entry | `loomgit log "Switched to gRPC for speed"` |
-| `loomgit search` | Semantic + Keyword search | `loomgit search "gRPC migration"` |
-| `loomgit list` | View chronological timeline | `loomgit list --limit 10` |
-| `loomgit ui` | Launch local web dashboard | `loomgit ui` |
-| `loomgit install-hook` | Enable Git post-commit hook | `loomgit install-hook` |
-| `loomgit setup-antigravity` | Auto-connect MCP to Antigravity IDE | `loomgit setup-antigravity` |
-| `loomgit setup-claude` | Auto-connect MCP to Claude Code | `loomgit setup-claude` |
-
 ---
 
 ## ⚖️ Benchmark & Feature Comparison
@@ -138,7 +135,7 @@ loomgit ui
 
 ---
 
-## 🏛️ Architecture & How It Works
+## 🏛️ Architecture & How It Works: Local-First Dual-Database Semantic Architecture
 
 ```
                      ┌──────────────────────────────────────────┐
@@ -171,6 +168,20 @@ loomgit ui
                      │  • Terminal CLI (`loomgit search`)       │
                      └──────────────────────────────────────────┘
 ```
+
+---
+
+## 💻 CLI Command Reference
+
+| Command | Description | Example |
+| :--- | :--- | :--- |
+| `loomgit log` | Log a manual memory entry | `loomgit log "Switched to gRPC for speed"` |
+| `loomgit search` | Semantic + Keyword search | `loomgit search "gRPC migration"` |
+| `loomgit list` | View chronological timeline | `loomgit list --limit 10` |
+| `loomgit ui` | Launch local web dashboard | `loomgit ui` |
+| `loomgit install-hook` | Enable Git post-commit hook | `loomgit install-hook` |
+| `loomgit setup-antigravity` | Auto-connect MCP to Antigravity IDE | `loomgit setup-antigravity` |
+| `loomgit setup-claude` | Auto-connect MCP to Claude Code | `loomgit setup-claude` |
 
 ---
 
