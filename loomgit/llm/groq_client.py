@@ -129,28 +129,19 @@ CRITICAL: Ensure ALL string values are enclosed in valid double quotes. Output s
                 model="qwen/qwen3.6-27b",
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.1,
-                response_format={"type": "json_object"},
-                extra_body={"chat_template_kwargs": {"enable_thinking": False}}
+                response_format={"type": "json_object"}
             )
             ai_answer = response.choices[0].message.content.strip()
         except Exception:
-            # Fallback without response_format if Groq's strict validator rejects syntax
-            try:
-                response = self.client.chat.completions.create(
-                    model="qwen/qwen3.6-27b",
-                    messages=[{"role": "user", "content": prompt + "\n\n/no_think"}],
-                    temperature=0.1
-                )
-                ai_answer = response.choices[0].message.content.strip()
-            except Exception:
-                response = self.client.chat.completions.create(
-                    model="qwen/qwen3.6-27b",
-                    messages=[{"role": "user", "content": prompt}],
-                    temperature=0.1
-                )
-                ai_answer = response.choices[0].message.content.strip()
+            # Fallback without response_format
+            response = self.client.chat.completions.create(
+                model="qwen/qwen3.6-27b",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.1
+            )
+            ai_answer = response.choices[0].message.content.strip()
         
-        # Strip <think>...</think> blocks that Qwen3.6 may produce
+        # Strip <think>...</think> blocks that Qwen3.6 produces before JSON output
         ai_answer = re.sub(r'<think>.*?</think>', '', ai_answer, flags=re.DOTALL).strip()
 
         # Robustly extract JSON substring ({...} or [...])
