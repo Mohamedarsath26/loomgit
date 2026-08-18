@@ -126,21 +126,33 @@ CRITICAL: Ensure ALL string values are enclosed in valid double quotes. Output s
 
         try:
             response = self.client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
+                model="qwen/qwen3.6-27b",
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.1,
-                response_format={"type": "json_object"}
+                response_format={"type": "json_object"},
+                extra_body={"chat_template_kwargs": {"enable_thinking": False}}
             )
             ai_answer = response.choices[0].message.content.strip()
         except Exception:
             # Fallback without response_format if Groq's strict validator rejects syntax
-            response = self.client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.1
-            )
-            ai_answer = response.choices[0].message.content.strip()
+            try:
+                response = self.client.chat.completions.create(
+                    model="qwen/qwen3.6-27b",
+                    messages=[{"role": "user", "content": prompt + "\n\n/no_think"}],
+                    temperature=0.1
+                )
+                ai_answer = response.choices[0].message.content.strip()
+            except Exception:
+                response = self.client.chat.completions.create(
+                    model="qwen/qwen3.6-27b",
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=0.1
+                )
+                ai_answer = response.choices[0].message.content.strip()
         
+        # Strip <think>...</think> blocks that Qwen3.6 may produce
+        ai_answer = re.sub(r'<think>.*?</think>', '', ai_answer, flags=re.DOTALL).strip()
+
         # Robustly extract JSON substring ({...} or [...])
         start_idx = min([i for i in [ai_answer.find('{'), ai_answer.find('[')] if i != -1], default=-1)
         end_idx = max(ai_answer.rfind('}'), ai_answer.rfind(']'))
