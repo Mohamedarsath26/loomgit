@@ -143,3 +143,34 @@ def log_manual_memory(req: LogMemoryRequest):
     memory = get_memory_instance()
     memory.capture(source="manual", raw_text=req.message.strip())
     return {"status": "success", "message": "Memory captured successfully."}
+
+@app.get("/api/memories/{record_id}")
+def get_memory(record_id: str):
+    """Retrieves a single memory record by its ID."""
+    memory = get_memory_instance()
+    r = memory.store.get_memory_record(record_id)
+    if not r:
+        raise HTTPException(status_code=404, detail="Memory record not found.")
+    return {
+        "id": r.id,
+        "type": r.type.value,
+        "summary": r.summary,
+        "what_changed": r.what_changed,
+        "reasoning": r.reasoning,
+        "tags": r.tags,
+        "related_files": r.related_files,
+        "timestamp": r.timestamp.isoformat(),
+        "source_ref": r.source_ref,
+        "project_name": r.project_name,
+        "project_path": r.project_path,
+    }
+
+@app.delete("/api/memories/{record_id}")
+def delete_memory(record_id: str):
+    """Deletes a single memory record by its ID."""
+    memory = get_memory_instance()
+    deleted = memory.delete(record_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Memory record not found.")
+    return {"status": "success", "message": "Memory record deleted successfully."}
+

@@ -92,3 +92,9 @@ class Memory:
         """Retrieves all memory records sorted by date and time (newest first by default)."""
         return self.store.get_all_memory_records(limit=limit, order=order, project_path=project_path)
 
+    def delete(self, record_id: str) -> bool:
+        """Deletes a memory record from both the database and vector store."""
+        self.vector_store.delete(record_id)
+        return self.store.delete_memory_record(record_id)
+
+

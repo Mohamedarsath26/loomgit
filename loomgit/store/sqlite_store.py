@@ -287,6 +287,28 @@ class SQLiteStore:
         rows = cursor.fetchall()
         return [{"name": row["project_name"], "path": row["project_path"]} for row in rows]
 
+    def delete_memory_record(self, record_id: str) -> bool:
+        """Deletes a MemoryRecord and its associated RawEvent from the database."""
+        cursor = self.conn.cursor()
+        
+        # 1. Fetch raw_event_id before deleting
+        cursor.execute("SELECT raw_event_id FROM memory_records WHERE id = ?", (record_id,))
+        row = cursor.fetchone()
+        if row is None:
+            return False
+            
+        raw_event_id = row["raw_event_id"]
+        
+        # 2. Delete the memory record
+        cursor.execute("DELETE FROM memory_records WHERE id = ?", (record_id,))
+        
+        # 3. Delete the raw event
+        cursor.execute("DELETE FROM raw_events WHERE id = ?", (raw_event_id,))
+        
+        self.conn.commit()
+        return True
+
+
 
     
 

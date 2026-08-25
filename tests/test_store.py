@@ -64,6 +64,43 @@ def test_store_memory_record(tmp_path: Path):
     assert loaded_memory.type == MemoryType.BUG_FIX
     assert loaded_memory.tags == ["database", "sqlite"]
 
+def test_delete_memory_record(tmp_path: Path):
+    db_path = tmp_path / "test_store.db"
+    store = SQLiteStore(db_path=db_path)
+    
+    raw_id = str(uuid.uuid4())
+    store.save_raw_event(RawEvent(
+        id=raw_id, source="manual", raw_text="dummy", metadata={}, timestamp=datetime.now()
+    ))
+    
+    memory_id = str(uuid.uuid4())
+    original_memory = MemoryRecord(
+        id=memory_id,
+        raw_event_id=raw_id,
+        type=MemoryType.BUG_FIX,
+        summary="Fixed the database bug",
+        reasoning="The index was missing.",
+        tags=["database", "sqlite"],
+        related_files=["sqlite_store.py"],
+        source_ref="manual:123",
+        timestamp=datetime.now()
+    )
+    
+    store.save_memory_record(original_memory)
+    
+    # Verify they exist
+    assert store.get_memory_record(memory_id) is not None
+    assert store.get_raw_event(raw_id) is not None
+    
+    # Delete and verify deletion
+    assert store.delete_memory_record(memory_id) is True
+    assert store.get_memory_record(memory_id) is None
+    assert store.get_raw_event(raw_id) is None
+    
+    # Deleting non-existent record should return False
+    assert store.delete_memory_record("non-existent-id") is False
+
+
 
 
     

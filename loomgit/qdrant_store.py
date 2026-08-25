@@ -67,3 +67,15 @@ class QdrantVectorStore:
             limit=limit
         )
         return [str(point.id) for point in results.points]
+
+    def delete(self, record_id: str) -> None:
+        """Deletes a point from Qdrant by its ID."""
+        try:
+            from qdrant_client.models import PointIdsList
+            self.client.delete(
+                collection_name=self.collection_name,
+                points_selector=PointIdsList(points=[record_id])
+            )
+        except Exception:
+            pass
+
