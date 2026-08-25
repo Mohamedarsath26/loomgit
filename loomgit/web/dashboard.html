@@ -480,6 +480,25 @@
             border-radius: 4px;
         }
 
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #22D3EE;
+            margin-top: 0.65rem;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .reasoning-header {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--cat-arch);
+            margin-bottom: 0.25rem;
+            font-style: normal;
+        }
+
         .reasoning-block {
             font-size: 0.8rem;
             color: var(--cat-arch);
@@ -783,9 +802,9 @@
                 const tagsSection = m.tags && m.tags.length > 0
                     ? `<div class="tags-row">${m.tags.map(t => `<span class="tag-chip">#${esc(t)}</span>`).join('')}</div>` : '';
                 const diffSection = m.what_changed
-                    ? `<div class="code-block">${esc(m.what_changed)}</div>` : '';
+                    ? `<div class="section-label">🔧 What changed:</div><div class="code-block">${esc(m.what_changed)}</div>` : '';
                 const reasoningSection = m.reasoning
-                    ? `<div class="reasoning-block">${esc(m.reasoning)}</div>` : '';
+                    ? `<div class="reasoning-block"><div class="reasoning-header">💡 Reasoning:</div>${esc(m.reasoning)}</div>` : '';
 
                 return `
                     <div class="memory-card">
