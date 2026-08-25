@@ -174,3 +174,23 @@ def delete_memory(record_id: str):
         raise HTTPException(status_code=404, detail="Memory record not found.")
     return {"status": "success", "message": "Memory record deleted successfully."}
 
+@app.get("/api/health")
+def healthcheck():
+    """Simple healthcheck endpoint."""
+    return {"status": "healthy"}
+
+@app.get("/api/tags")
+def list_tags(project_path: Optional[str] = None):
+    """Returns a list of all unique tags with their frequencies, ordered by count descending."""
+    memory = get_memory_instance()
+    records = memory.list_all(limit=1000, project_path=project_path)
+    
+    tag_counts = {}
+    for r in records:
+        for tag in r.tags:
+            tag_counts[tag] = tag_counts.get(tag, 0) + 1
+            
+    sorted_tags = [{"tag": tag, "count": count} for tag, count in sorted(tag_counts.items(), key=lambda x: x[1], reverse=True)]
+    return sorted_tags
+
+
