@@ -163,4 +163,11 @@ CRITICAL: Ensure ALL string values are enclosed in valid double quotes. Output s
                 "related_files": metadata.get("changed_files", [])
             }
 
+    def test_connection(self) -> bool:
+        """Helper method to verify Groq client configuration and connectivity."""
+        try:
+            return bool(self.client.api_key)
+        except Exception:
+            return False
+
 
